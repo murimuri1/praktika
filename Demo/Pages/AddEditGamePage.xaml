@@ -1,0 +1,25 @@
+﻿<Page x:Class="Demo.Pages.AddEditGamePage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      Title="Игра">
+
+    <Grid Background="#1b2838">
+
+        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+
+            <TextBox x:Name="TBTitle" Width="250" Margin="5"/>
+            <TextBox x:Name="TBDescription" Width="250" Margin="5"/>
+            <TextBox x:Name="TBPrice" Width="250" Margin="5"/>
+            <TextBox x:Name="TBDiscount" Width="250" Margin="5"/>
+
+            <ComboBox x:Name="CBGenre" Width="250" Margin="5"/>
+            <ComboBox x:Name="CBDeveloper" Width="250" Margin="5"/>
+            <ComboBox x:Name="CBPublisher" Width="250" Margin="5"/>
+
+            <Button Content="Выбрать фото" Click="BtnImage_Click" Margin="5"/>
+            <Button Content="Сохранить" Click="BtnSave_Click" Margin="5"/>
+
+        </StackPanel>
+
+    </Grid>
+</Page>

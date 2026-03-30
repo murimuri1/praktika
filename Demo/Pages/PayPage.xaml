@@ -1,0 +1,42 @@
+﻿<Page x:Class="Demo.Pages.PayPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      Title="Оплата">
+
+    <Grid Background="#1b2838">
+        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Width="300">
+
+            <!-- Название выбранной игры -->
+            <TextBlock x:Name="GameName"
+                       Foreground="White"
+                       FontSize="20"
+                       FontWeight="Bold"
+                       HorizontalAlignment="Center"
+                       Margin="0,0,0,20"/>
+
+            <!-- Подпись и поле для номера карты -->
+            <TextBlock Text="Номер банковской карты:"
+                       Foreground="White"
+                       Margin="0,0,0,5"/>
+            <TextBox x:Name="CardNumber"
+                     Height="30"
+                     Margin="0,0,0,15"
+                     VerticalContentAlignment="Center"/>
+
+            <!-- Подпись и поле для CVV кода -->
+            <TextBlock Text="CVV / CVC код:"
+                       Foreground="White"
+                       Margin="0,0,0,5"/>
+            <TextBox x:Name="CVV"
+                     Height="30"
+                     Margin="0,0,0,20"
+                     VerticalContentAlignment="Center"/>
+
+            <!-- Кнопка оплаты -->
+            <Button Content="Оплатить"
+                    Height="35"
+                    Click="Pay_Click"/>
+
+        </StackPanel>
+    </Grid>
+</Page>
