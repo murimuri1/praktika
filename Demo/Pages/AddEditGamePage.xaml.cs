@@ -73,8 +73,10 @@ namespace Demo.Pages
 
         private void SelectImage_Click(object sender, RoutedEventArgs e)
         {
-            OpenFileDialog dialog = new OpenFileDialog();
-            dialog.Filter = "Изображения (*.jpg, *.png)|*.jpg;*.png|Все файлы (*.*)|*.*";
+            OpenFileDialog dialog = new OpenFileDialog
+            {
+                Filter = "Изображения (*.jpg, *.png)|*.jpg;*.png|Все файлы (*.*)|*.*"
+            };
 
             if (dialog.ShowDialog() == true)
             {
@@ -141,12 +143,13 @@ namespace Demo.Pages
                     App.Context.SaveChanges();
                 }
 
-                MessageBox.Show("Игра успешно сохранена!", "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
+                // ИСПОЛЬЗУЕМ TOAST ВМЕСТО MESSAGEBOX
+                (Application.Current.MainWindow as MainWindow)?.ShowToast("Игра успешно сохранена!");
                 NavigationService.GoBack();
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Ошибка при сохранении: " + ex.Message);
+                (Application.Current.MainWindow as MainWindow)?.ShowToast("Ошибка при сохранении: " + ex.Message, true);
             }
         }
 

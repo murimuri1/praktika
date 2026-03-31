@@ -12,24 +12,18 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
-            <!-- Шапка -->
             <RowDefinition Height="*"/>
-            <!-- Контент -->
         </Grid.RowDefinitions>
 
-        <!-- ПАНЕЛЬ НАВИГАЦИИ -->
-        <StackPanel x:Name="HeaderPanel" Grid.Row="0">
+        <!-- ПАНЕЛЬ НАВИГАЦИИ (ШАПКА) -->
+        <StackPanel x:Name="HeaderPanel" Grid.Row="0" Panel.ZIndex="10">
             <Grid Background="#171a21" Height="70">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
-                    <!-- Назад -->
                     <ColumnDefinition Width="*"/>
-                    <!-- Меню -->
                     <ColumnDefinition Width="Auto"/>
-                    <!-- Профиль -->
                 </Grid.ColumnDefinitions>
 
-                <!-- КНОПКА НАЗАД -->
                 <Button x:Name="BtnBack" Grid.Column="0" Click="BtnBack_Click" Margin="15,0,15,0" Cursor="Hand">
                     <Button.Template>
                         <ControlTemplate TargetType="Button">
@@ -51,10 +45,7 @@
                     </Button.Template>
                 </Button>
 
-                <!-- МЕНЮ: МАГАЗИН, БИБЛИОТЕКА, ДОБАВИТЬ/ПРАВКА -->
                 <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" Margin="10,0,0,0">
-
-                    <!-- Магазин -->
                     <Button Click="BtnStore_Click" Margin="0,0,40,0">
                         <Button.Template>
                             <ControlTemplate TargetType="Button">
@@ -72,7 +63,6 @@
                         </Button.Template>
                     </Button>
 
-                    <!-- Библиотека -->
                     <Button Click="BtnLibrary_Click" Margin="0,0,40,0">
                         <Button.Template>
                             <ControlTemplate TargetType="Button">
@@ -90,7 +80,6 @@
                         </Button.Template>
                     </Button>
 
-                    <!-- Динамическая кнопка ДОБАВИТЬ/ПРАВКА -->
                     <Button x:Name="BtnAddGame" Click="BtnAddGame_Click" Visibility="Collapsed">
                         <Button.Template>
                             <ControlTemplate TargetType="Button">
@@ -99,13 +88,11 @@
                                     <Border x:Name="ind" Height="3" Background="#1a9fff" Margin="0,5,0,0" Visibility="Collapsed"/>
                                 </StackPanel>
                                 <ControlTemplate.Triggers>
-                                    <!-- Триггер для ДОБАВЛЕНИЯ -->
                                     <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=Title}" Value="ДОБАВЛЕНИЕ ИГРЫ">
                                         <Setter TargetName="txt" Property="Foreground" Value="White"/>
                                         <Setter TargetName="ind" Property="Visibility" Value="Visible"/>
                                         <Setter TargetName="txt" Property="Text" Value="ДОБАВИТЬ"/>
                                     </DataTrigger>
-                                    <!-- Триггер для ПРАВКИ -->
                                     <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=Title}" Value="РЕДАКТИРОВАНИЕ ИГРЫ">
                                         <Setter TargetName="txt" Property="Foreground" Value="White"/>
                                         <Setter TargetName="ind" Property="Visibility" Value="Visible"/>
@@ -117,7 +104,6 @@
                     </Button>
                 </StackPanel>
 
-                <!-- ПРОФИЛЬ -->
                 <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,25,0">
                     <TextBlock x:Name="TxtUserName" Text="user" Foreground="White" FontSize="16" VerticalAlignment="Center" Margin="0,0,15,0"/>
                     <Border Width="42" Height="42" CornerRadius="4" Background="#3d4450" BorderBrush="#2a475e" BorderThickness="2">
@@ -130,5 +116,22 @@
 
         <!-- КОНТЕНТ -->
         <Frame x:Name="FrameMain" Grid.Row="1" NavigationUIVisibility="Hidden"/>
+
+        <!-- ==================================================== -->
+        <!-- TOAST УВЕДОМЛЕНИЯ (ВСПЛЫВАШКИ)                       -->
+        <!-- ==================================================== -->
+        <Border x:Name="ToastNotification" Grid.Row="1" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="30" Padding="25,15" CornerRadius="8" Background="#a3db59" Visibility="Hidden" Panel.ZIndex="999">
+            <Border.Effect>
+                <DropShadowEffect BlurRadius="15" ShadowDepth="4" Opacity="0.4"/>
+            </Border.Effect>
+            <Border.RenderTransform>
+                <TranslateTransform x:Name="ToastTransform" Y="100"/>
+            </Border.RenderTransform>
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                <TextBlock x:Name="ToastIcon" Text="✓" FontSize="20" FontWeight="Bold" Margin="0,0,10,0" VerticalAlignment="Center" Foreground="#171a21"/>
+                <TextBlock x:Name="ToastText" Text="Успешно!" FontSize="16" FontWeight="SemiBold" VerticalAlignment="Center" Foreground="#171a21"/>
+            </StackPanel>
+        </Border>
+
     </Grid>
 </Window>

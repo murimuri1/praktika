@@ -4,14 +4,12 @@ using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 
 namespace Demo.Pages
 {
-    /// <summary>
-    /// Логика взаимодействия для PayPage.xaml
-    /// </summary>
     public partial class PayPage : Page
     {
         private readonly Game _currentGame;
@@ -29,10 +27,37 @@ namespace Demo.Pages
                 {
                     ImgGame.Source = new BitmapImage(new Uri(_currentGame.ImagePath, UriKind.RelativeOrAbsolute));
                 }
-                catch
-                {
-                    // В случае ошибки загрузки фото используется заглушка по умолчанию
-                }
+                catch { }
+            }
+        }
+
+        // ==========================================
+        // УМНАЯ ИКОНКА БАНКОВСКОЙ КАРТЫ
+        // ==========================================
+        private void CardNumber_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (CardIcon == null) return;
+            string text = CardNumber.Text;
+
+            if (text.StartsWith("4"))
+            {
+                CardIcon.Text = "VISA";
+                CardIcon.Foreground = new SolidColorBrush(Color.FromRgb(26, 159, 255)); // Синий
+            }
+            else if (text.StartsWith("5"))
+            {
+                CardIcon.Text = "Mastercard";
+                CardIcon.Foreground = new SolidColorBrush(Color.FromRgb(255, 153, 0)); // Оранжевый
+            }
+            else if (text.StartsWith("2"))
+            {
+                CardIcon.Text = "МИР";
+                CardIcon.Foreground = new SolidColorBrush(Color.FromRgb(163, 219, 89)); // Зеленый
+            }
+            else
+            {
+                CardIcon.Text = "💳";
+                CardIcon.Foreground = new SolidColorBrush(Color.FromRgb(92, 109, 126)); // Стандартный серый
             }
         }
 
@@ -42,16 +67,13 @@ namespace Demo.Pages
         private void ExpiryDate_TextChanged(object sender, TextChangedEventArgs e)
         {
             if (!(sender is TextBox textBox)) return;
-
             string text = textBox.Text;
 
-            // Если введено 2 цифры и слэша еще нет — добавляем его
             if (text.Length == 2 && !text.Contains("/"))
             {
                 textBox.Text = text + "/";
                 textBox.SelectionStart = textBox.Text.Length;
             }
-            // Если пользователь удаляет слэш, удаляем и цифру перед ним для удобства
             else if (text.Length == 2 && text.Contains("/"))
             {
                 textBox.Text = text.Substring(0, 1);
@@ -59,9 +81,6 @@ namespace Demo.Pages
             }
         }
 
-        /// <summary>
-        /// Ограничение ввода: только цифры
-        /// </summary>
         private void NumericOnly_PreviewTextInput(object sender, TextCompositionEventArgs e)
         {
             Regex regex = new Regex("[^0-9]+");
@@ -70,66 +89,47 @@ namespace Demo.Pages
 
         private void Pay_Click(object sender, RoutedEventArgs e)
         {
-            // Проверка заполнения полей перед "оплатой"
             if (string.IsNullOrWhiteSpace(CardNumber.Text) || CardNumber.Text.Length < 16)
             {
-                MessageBox.Show("Введите полный номер карты (16 цифр)", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                (Application.Current.MainWindow as MainWindow)?.ShowToast("Введите полный номер карты (16 цифр)", true);
                 return;
             }
-
             if (ExpiryDate.Text.Length < 5)
             {
-                MessageBox.Show("Введите срок действия в формате ММ/ГГ (например, 10/27)", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                (Application.Current.MainWindow as MainWindow)?.ShowToast("Введите срок действия в формате ММ/ГГ", true);
                 return;
             }
-
             if (CVV.Password.Length < 3)
             {
-                MessageBox.Show("Введите корректный 3-значный CVV код", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                (Application.Current.MainWindow as MainWindow)?.ShowToast("Введите корректный CVV код", true);
                 return;
             }
 
-            // ==========================================
-            // РЕАЛЬНОЕ ДОБАВЛЕНИЕ ИГРЫ В БАЗУ ДАННЫХ
-            // ==========================================
             try
             {
-                // Создаем новую запись для таблицы UserGame
                 UserGame newPurchase = new UserGame
                 {
-                    User_Id = App.CurrentUser.Id_User, // Берем ID авторизованного пользователя
-                    Game_Id = _currentGame.Id_Game,    // Берем ID покупаемой игры
-                    PurchaseDate = DateTime.Now        // Фиксируем дату и время покупки
+                    User_Id = App.CurrentUser.Id_User,
+                    Game_Id = _currentGame.Id_Game,
+                    PurchaseDate = DateTime.Now
                 };
 
-                // Добавляем запись в контекст Entity Framework
                 App.Context.UserGame.Add(newPurchase);
-
-                // Сохраняем изменения прямо в SQL Server
                 App.Context.SaveChanges();
 
-                // Сообщаем об успехе
-                MessageBox.Show("Оплата прошла успешно! Игра добавлена в вашу библиотеку.", "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
+                (Application.Current.MainWindow as MainWindow)?.ShowToast("Оплата прошла успешно! Игра добавлена в библиотеку.");
 
-                // Возвращаемся обратно
-                if (NavigationService.CanGoBack)
-                {
-                    NavigationService.GoBack();
-                }
+                if (NavigationService.CanGoBack) NavigationService.GoBack();
             }
             catch (Exception ex)
             {
-                // Если вдруг база данных недоступна или произошла ошибка
-                MessageBox.Show("Ошибка при сохранении покупки в БД: " + ex.Message, "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                (Application.Current.MainWindow as MainWindow)?.ShowToast("Ошибка при оплате: " + ex.Message, true);
             }
         }
 
         private void Cancel_Click(object sender, RoutedEventArgs e)
         {
-            if (NavigationService.CanGoBack)
-            {
-                NavigationService.GoBack();
-            }
+            if (NavigationService.CanGoBack) NavigationService.GoBack();
         }
     }
 }

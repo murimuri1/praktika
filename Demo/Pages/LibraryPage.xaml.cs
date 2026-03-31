@@ -6,6 +6,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Navigation;
 
 namespace Demo.Pages
 {
@@ -27,27 +28,35 @@ namespace Demo.Pages
 
             try
             {
-                // Получаем ID купленных игр
                 var ownedGameIds = App.Context.UserGame
                     .Where(ug => ug.User_Id == App.CurrentUser.Id_User)
                     .Select(ug => ug.Game_Id)
                     .ToList();
 
-                // Загружаем игры и оборачиваем их в нашу ViewModel
                 var myGames = App.Context.Game
                     .Where(g => ownedGameIds.Contains(g.Id_Game))
                     .ToList()
-                    // ИСПРАВЛЕНИЕ: Теперь по умолчанию игра НЕ установлена (IsInstalled = false)
                     .Select(g => new LibraryItemViewModel { Game = g, IsInstalled = false })
                     .ToList();
 
                 LibraryList.ItemsSource = myGames;
-
                 TxtCount.Text = $"{myGames.Count} " + GetGamesWord(myGames.Count);
+
+                // ЛОГИКА ОТОБРАЖЕНИЯ ПУСТОГО ЭКРАНА
+                if (myGames.Count == 0)
+                {
+                    EmptyStatePanel.Visibility = Visibility.Visible;
+                    LibraryScrollViewer.Visibility = Visibility.Collapsed;
+                }
+                else
+                {
+                    EmptyStatePanel.Visibility = Visibility.Collapsed;
+                    LibraryScrollViewer.Visibility = Visibility.Visible;
+                }
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Ошибка загрузки библиотеки: " + ex.Message);
+                (Application.Current.MainWindow as MainWindow)?.ShowToast("Ошибка: " + ex.Message, true);
             }
         }
 
@@ -62,15 +71,17 @@ namespace Demo.Pages
             return "игр";
         }
 
-        // ==========================================
-        // ОБРАБОТЧИКИ НАЖАТИЯ КНОПОК
-        // ==========================================
+        // Переход в магазин при пустой библиотеке
+        private void GoToStore_Click(object sender, RoutedEventArgs e)
+        {
+            NavigationService.Navigate(new GamePage());
+        }
 
         private void Play_Click(object sender, RoutedEventArgs e)
         {
             if (sender is Button btn && btn.DataContext is LibraryItemViewModel item)
             {
-                MessageBox.Show($"Запуск игры {item.Game.Title}...", "Запуск", MessageBoxButton.OK, MessageBoxImage.Information);
+                (Application.Current.MainWindow as MainWindow)?.ShowToast($"Запуск игры {item.Game.Title}...");
             }
         }
 
@@ -78,8 +89,9 @@ namespace Demo.Pages
         {
             if (sender is Button btn && btn.DataContext is LibraryItemViewModel item)
             {
-                MessageBox.Show($"Игра {item.Game.Title} успешно установлена на ваш компьютер!", "Установка завершена", MessageBoxButton.OK, MessageBoxImage.Information);
-                item.IsInstalled = true; // Триггер в XAML автоматически поменяет кнопки
+                // ИСПОЛЬЗУЕМ КРАСИВЫЙ TOAST ВМЕСТО MESSAGEBOX
+                (Application.Current.MainWindow as MainWindow)?.ShowToast($"Игра {item.Game.Title} установлена!");
+                item.IsInstalled = true;
             }
         }
 
@@ -87,19 +99,18 @@ namespace Demo.Pages
         {
             if (sender is Button btn && btn.DataContext is LibraryItemViewModel item)
             {
-                var result = MessageBox.Show($"Вы действительно хотите удалить файлы игры {item.Game.Title} с этого ПК?", "Удаление", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                var result = MessageBox.Show($"Удалить файлы {item.Game.Title} с компьютера?", "Удаление", MessageBoxButton.YesNo, MessageBoxImage.Question);
 
                 if (result == MessageBoxResult.Yes)
                 {
-                    item.IsInstalled = false; // Триггер в XAML автоматически поменяет кнопки на "Установить"
+                    item.IsInstalled = false;
+                    // Вызываем наше кастомное уведомление после успешного удаления
+                    (Application.Current.MainWindow as MainWindow)?.ShowToast($"Игра {item.Game.Title} удалена!");
                 }
             }
         }
     }
 
-    // ==========================================
-    // КЛАСС-ОБЕРТКА ДЛЯ УПРАВЛЕНИЯ СОСТОЯНИЕМ
-    // ==========================================
     public class LibraryItemViewModel : INotifyPropertyChanged
     {
         public Game Game { get; set; }
@@ -115,7 +126,6 @@ namespace Demo.Pages
             }
         }
 
-        // Событие для обновления интерфейса в реальном времени
         public event PropertyChangedEventHandler PropertyChanged;
         protected void OnPropertyChanged([CallerMemberName] string name = null)
         {

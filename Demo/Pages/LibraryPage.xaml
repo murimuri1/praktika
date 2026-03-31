@@ -1,12 +1,8 @@
 ﻿<Page x:Class="Demo.Pages.LibraryPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-      mc:Ignorable="d"
-      d:DesignHeight="720" d:DesignWidth="1280"
-      Loaded="Page_Loaded"
       Title="БИБЛИОТЕКА"
+      Loaded="Page_Loaded"
       FontFamily="Segoe UI">
 
     <Grid Background="#1b2838">
@@ -15,163 +11,119 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <!-- ВЕРХНЯЯ ПАНЕЛЬ БИБЛИОТЕКИ -->
-        <Border Grid.Row="0" Background="#213245" Margin="30,25,30,10" CornerRadius="8" Padding="25,15">
+        <!-- ВЕРХНЯЯ ПАНЕЛЬ -->
+        <Border Grid.Row="0" Background="#213245" Margin="20,20,20,10" CornerRadius="8" Padding="15">
             <StackPanel Orientation="Horizontal">
-                <TextBlock Text="ВАША КОЛЛЕКЦИЯ" Foreground="#1a9fff" FontWeight="Bold" FontSize="14" VerticalAlignment="Center"/>
-                <Border Width="1" Background="#1a9fff" Opacity="0.3" Margin="20,0" Height="20"/>
-                <TextBlock x:Name="TxtCount" Text="0 игр" Foreground="#c5c3c0" FontSize="14" VerticalAlignment="Center"/>
+                <TextBlock Text="ВАША КОЛЛЕКЦИЯ" Foreground="#1a9fff" FontWeight="Bold" FontSize="12" VerticalAlignment="Center" Margin="0,0,20,0"/>
+                <TextBlock x:Name="TxtCount" Text="0 игр" Foreground="#5c6d7e" FontSize="12" VerticalAlignment="Center"/>
             </StackPanel>
         </Border>
 
-        <!-- СПИСОК КУПЛЕННЫХ ИГР -->
-        <ScrollViewer Grid.Row="1" Margin="20,5,20,20" VerticalScrollBarVisibility="Auto">
+        <!-- СОСТОЯНИЕ "ПУСТО" (ЕСЛИ ИГР НЕТ) -->
+        <StackPanel x:Name="EmptyStatePanel" Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center" Visibility="Collapsed">
+            <TextBlock Text="📦" FontSize="100" Foreground="#2a475e" HorizontalAlignment="Center" Margin="0,0,0,10"/>
+            <TextBlock Text="Ваша библиотека пуста" Foreground="White" FontSize="28" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,0,0,10"/>
+            <TextBlock Text="Время отправиться в магазин и найти что-то интересное!" Foreground="#5c6d7e" FontSize="16" HorizontalAlignment="Center" Margin="0,0,0,25"/>
+            <Button Content="ПЕРЕЙТИ В МАГАЗИН" Click="GoToStore_Click" Width="220" Height="45" Background="#1a9fff" Foreground="White" FontWeight="Bold" Cursor="Hand">
+                <Button.Template>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="btnBorder" Background="{TemplateBinding Background}" CornerRadius="4">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="btnBorder" Property="Background" Value="#31b0ff"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Button.Template>
+            </Button>
+        </StackPanel>
+
+        <!-- СПИСОК ИГР -->
+        <ScrollViewer x:Name="LibraryScrollViewer" Grid.Row="1" Margin="20,5,20,20" VerticalScrollBarVisibility="Auto">
             <ItemsControl x:Name="LibraryList">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
                         <WrapPanel HorizontalAlignment="Center"/>
                     </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
-
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <!-- Карточка игры -->
-                        <Border x:Name="CardBorder" Width="280" Margin="12" Background="#2a475e" CornerRadius="12">
-                            <Border.Effect>
-                                <DropShadowEffect BlurRadius="25" ShadowDepth="6" Opacity="0.5"/>
-                            </Border.Effect>
-
+                        <Border Width="260" Margin="10" Background="#2a475e" CornerRadius="12">
                             <StackPanel>
-                                <!-- Изображение -->
                                 <Border CornerRadius="12,12,0,0" ClipToBounds="True" Background="#171a21">
-                                    <Image Height="280" Source="{Binding Game.ImagePath}" Stretch="UniformToFill">
-                                        <Image.Style>
-                                            <Style TargetType="Image">
-                                                <!-- Затемняем картинку, если игра не установлена -->
-                                                <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding IsInstalled}" Value="False">
-                                                        <Setter Property="Opacity" Value="0.4"/>
-                                                    </DataTrigger>
-                                                    <DataTrigger Binding="{Binding IsMouseOver, RelativeSource={RelativeSource AncestorType=Border}}" Value="True">
-                                                        <Setter Property="Opacity" Value="0.9"/>
-                                                    </DataTrigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </Image.Style>
-                                    </Image>
+                                    <Image Height="260" Source="{Binding Game.ImagePath}" Stretch="UniformToFill"/>
                                 </Border>
-
-                                <Border Padding="18">
+                                <Border Padding="15">
                                     <StackPanel>
-                                        <!-- Жанр и Разработчик -->
                                         <TextBlock Foreground="#a3db59" FontSize="11" FontWeight="Bold" Margin="0,0,0,6">
-                                            <Run Text="{Binding Game.Genre.Name_Genre}"/>
-                                            <Run Text=" • "/>
-                                            <Run Text="{Binding Game.Developer.Name_Developer}"/>
+                                            <Run Text="{Binding Game.Genre.Name_Genre}"/> • <Run Text="{Binding Game.Developer.Name_Developer}"/>
                                         </TextBlock>
+                                        <TextBlock Text="{Binding Game.Title}" Foreground="White" FontSize="18" FontWeight="Bold" Margin="0,0,0,10" Height="45" TextWrapping="Wrap"/>
 
-                                        <!-- Название игры -->
-                                        <TextBlock Text="{Binding Game.Title}" Foreground="White" FontSize="20" FontWeight="Bold" Margin="0,0,0,15" TextWrapping="Wrap"/>
-
-                                        <!-- ПАНЕЛЬ КНОПОК УПРАВЛЕНИЯ -->
-                                        <Grid Height="40">
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="*"/>
-                                                <ColumnDefinition Width="Auto"/>
-                                            </Grid.ColumnDefinitions>
-
-                                            <!-- КНОПКА ИГРАТЬ -->
-                                            <Button Grid.Column="0" Content="ИГРАТЬ" Click="Play_Click" Foreground="White" FontWeight="Bold" BorderThickness="0" Cursor="Hand">
-                                                <Button.Style>
-                                                    <Style TargetType="Button">
-                                                        <Setter Property="Visibility" Value="Visible"/>
-                                                        <Style.Triggers>
-                                                            <!-- Прячем кнопку, если игра удалена -->
-                                                            <DataTrigger Binding="{Binding IsInstalled}" Value="False">
-                                                                <Setter Property="Visibility" Value="Collapsed"/>
-                                                            </DataTrigger>
-                                                        </Style.Triggers>
-                                                    </Style>
-                                                </Button.Style>
+                                        <!-- Кнопки управления с DataTriggers -->
+                                        <Grid Height="35">
+                                            <!-- Кнопка УСТАНОВИТЬ -->
+                                            <Button x:Name="BtnInstall" Content="УСТАНОВИТЬ" Click="Install_Click" Background="#1a9fff" Foreground="White" FontWeight="Bold" Cursor="Hand">
                                                 <Button.Template>
                                                     <ControlTemplate TargetType="Button">
-                                                        <Border x:Name="btn" Background="#4c6b22" CornerRadius="4">
+                                                        <Border x:Name="brd" Background="{TemplateBinding Background}" CornerRadius="4">
                                                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                                         </Border>
                                                         <ControlTemplate.Triggers>
                                                             <Trigger Property="IsMouseOver" Value="True">
-                                                                <Setter TargetName="btn" Property="Background" Value="#5da821"/>
+                                                                <Setter TargetName="brd" Property="Background" Value="#31b0ff"/>
                                                             </Trigger>
                                                         </ControlTemplate.Triggers>
                                                     </ControlTemplate>
                                                 </Button.Template>
                                             </Button>
 
-                                            <!-- КНОПКА УДАЛИТЬ (иконка корзины) -->
-                                            <Button Grid.Column="1" Content="🗑" ToolTip="Удалить игру" Click="Delete_Click" Foreground="#c5c3c0" FontSize="18" BorderThickness="0" Cursor="Hand" Width="40" Margin="8,0,0,0">
-                                                <Button.Style>
-                                                    <Style TargetType="Button">
-                                                        <Setter Property="Visibility" Value="Visible"/>
-                                                        <Style.Triggers>
-                                                            <!-- Прячем кнопку, если игра удалена -->
-                                                            <DataTrigger Binding="{Binding IsInstalled}" Value="False">
-                                                                <Setter Property="Visibility" Value="Collapsed"/>
-                                                            </DataTrigger>
-                                                        </Style.Triggers>
-                                                    </Style>
-                                                </Button.Style>
-                                                <Button.Template>
-                                                    <ControlTemplate TargetType="Button">
-                                                        <Border x:Name="btn" Background="#3d4450" CornerRadius="4">
-                                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                                        </Border>
-                                                        <ControlTemplate.Triggers>
-                                                            <Trigger Property="IsMouseOver" Value="True">
-                                                                <Setter TargetName="btn" Property="Background" Value="#a32b2b"/>
-                                                                <Setter Property="Foreground" Value="White"/>
-                                                            </Trigger>
-                                                        </ControlTemplate.Triggers>
-                                                    </ControlTemplate>
-                                                </Button.Template>
-                                            </Button>
-
-                                            <!-- КНОПКА УСТАНОВИТЬ -->
-                                            <Button Grid.Column="0" Grid.ColumnSpan="2" Content="УСТАНОВИТЬ" Click="Install_Click" Foreground="White" FontWeight="Bold" BorderThickness="0" Cursor="Hand">
-                                                <Button.Style>
-                                                    <Style TargetType="Button">
-                                                        <Setter Property="Visibility" Value="Collapsed"/>
-                                                        <Style.Triggers>
-                                                            <!-- Показываем кнопку, если игра удалена -->
-                                                            <DataTrigger Binding="{Binding IsInstalled}" Value="False">
-                                                                <Setter Property="Visibility" Value="Visible"/>
-                                                            </DataTrigger>
-                                                        </Style.Triggers>
-                                                    </Style>
-                                                </Button.Style>
-                                                <Button.Template>
-                                                    <ControlTemplate TargetType="Button">
-                                                        <Border x:Name="btn" Background="#1a9fff" CornerRadius="4">
-                                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                                        </Border>
-                                                        <ControlTemplate.Triggers>
-                                                            <Trigger Property="IsMouseOver" Value="True">
-                                                                <Setter TargetName="btn" Property="Background" Value="#31b0ff"/>
-                                                            </Trigger>
-                                                        </ControlTemplate.Triggers>
-                                                    </ControlTemplate>
-                                                </Button.Template>
-                                            </Button>
+                                            <!-- Кнопки ИГРАТЬ и УДАЛИТЬ -->
+                                            <UniformGrid x:Name="GridInstalled" Columns="2" Visibility="Collapsed">
+                                                <Button Content="ИГРАТЬ" Click="Play_Click" Background="#a3db59" Foreground="#171a21" FontWeight="Bold" Margin="0,0,2,0" Cursor="Hand">
+                                                    <Button.Template>
+                                                        <ControlTemplate TargetType="Button">
+                                                            <Border x:Name="brd" Background="{TemplateBinding Background}" CornerRadius="4">
+                                                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                            </Border>
+                                                            <ControlTemplate.Triggers>
+                                                                <Trigger Property="IsMouseOver" Value="True">
+                                                                    <Setter TargetName="brd" Property="Background" Value="#beee11"/>
+                                                                </Trigger>
+                                                            </ControlTemplate.Triggers>
+                                                        </ControlTemplate>
+                                                    </Button.Template>
+                                                </Button>
+                                                <Button Content="🗑" Click="Delete_Click" Background="#3d4450" Foreground="#c5c3c0" FontSize="16" Margin="2,0,0,0" Cursor="Hand">
+                                                    <Button.Template>
+                                                        <ControlTemplate TargetType="Button">
+                                                            <Border x:Name="brd" Background="{TemplateBinding Background}" CornerRadius="4">
+                                                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                            </Border>
+                                                            <ControlTemplate.Triggers>
+                                                                <Trigger Property="IsMouseOver" Value="True">
+                                                                    <Setter TargetName="brd" Property="Background" Value="#a32b2b"/>
+                                                                    <Setter Property="Foreground" Value="White"/>
+                                                                </Trigger>
+                                                            </ControlTemplate.Triggers>
+                                                        </ControlTemplate>
+                                                    </Button.Template>
+                                                </Button>
+                                            </UniformGrid>
                                         </Grid>
-
                                     </StackPanel>
                                 </Border>
                             </StackPanel>
                         </Border>
 
+                        <!-- Переключатель видимости кнопок на основе IsInstalled -->
                         <DataTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="CardBorder" Property="Background" Value="#355a77"/>
-                            </Trigger>
+                            <DataTrigger Binding="{Binding IsInstalled}" Value="True">
+                                <Setter TargetName="BtnInstall" Property="Visibility" Value="Collapsed"/>
+                                <Setter TargetName="GridInstalled" Property="Visibility" Value="Visible"/>
+                            </DataTrigger>
                         </DataTemplate.Triggers>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
