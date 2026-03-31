@@ -30,9 +30,53 @@
         <Style TargetType="ComboBox">
             <Setter Property="Background" Value="#171a21"/>
             <Setter Property="Foreground" Value="White"/>
-            <Setter Property="BorderBrush" Value="#1a9fff"/>
+            <Setter Property="BorderBrush" Value="#2a475e"/>
             <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="ScrollViewer.CanContentScroll" Value="False"/>
+            <Setter Property="Padding" Value="15,0,30,0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ComboBox">
+                        <Grid>
+                            <!-- Основной темный фон и рамка -->
+                            <Border x:Name="border" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="4">
+                                <ToggleButton x:Name="toggleButton" BorderThickness="0" Background="Transparent" Focusable="false" IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}" ClickMode="Press">
+                                    <ToggleButton.Template>
+                                        <ControlTemplate TargetType="ToggleButton">
+                                            <Border Background="Transparent">
+                                                <!-- Кастомная синяя стрелочка -->
+                                                <Path x:Name="arrow" Data="M 0 0 L 5 5 L 10 0 Z" Fill="#1a9fff" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,15,0" Stretch="None"/>
+                                            </Border>
+                                        </ControlTemplate>
+                                    </ToggleButton.Template>
+                                </ToggleButton>
+                            </Border>
+
+                            <!-- Выбранный текст -->
+                            <ContentPresenter x:Name="contentPresenter" Content="{TemplateBinding SelectionBoxItem}" ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}" ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}" HorizontalAlignment="Left" Margin="{TemplateBinding Padding}" VerticalAlignment="Center" IsHitTestVisible="False"/>
+
+                            <!-- Выпадающее меню -->
+                            <Popup x:Name="popup" AllowsTransparency="True" IsOpen="{TemplateBinding IsDropDownOpen}" Placement="Bottom" PopupAnimation="Slide">
+                                <Border x:Name="dropDownBorder" Background="#213245" BorderBrush="#1a9fff" BorderThickness="1" CornerRadius="4" MinWidth="{TemplateBinding ActualWidth}" MaxHeight="{TemplateBinding MaxDropDownHeight}">
+                                    <ScrollViewer x:Name="dropDownScrollViewer">
+                                        <ItemsPresenter x:Name="ItemsPresenter" KeyboardNavigation.DirectionalNavigation="Contained"/>
+                                    </ScrollViewer>
+                                </Border>
+                            </Popup>
+                        </Grid>
+
+                        <!-- Эффекты при наведении и открытии списка -->
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="BorderBrush" Value="#1a9fff"/>
+                            </Trigger>
+                            <Trigger Property="IsDropDownOpen" Value="True">
+                                <Setter TargetName="border" Property="BorderBrush" Value="#1a9fff"/>
+                                <Setter TargetName="border" Property="Background" Value="#2a475e"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
         </Style>
     </Page.Resources>
 

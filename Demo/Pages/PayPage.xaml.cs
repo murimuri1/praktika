@@ -89,12 +89,38 @@ namespace Demo.Pages
                 return;
             }
 
-            // Имитация успешной транзакции
-            MessageBox.Show("Оплата прошла успешно! Игра добавлена в вашу библиотеку.", "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
-
-            if (NavigationService.CanGoBack)
+            // ==========================================
+            // РЕАЛЬНОЕ ДОБАВЛЕНИЕ ИГРЫ В БАЗУ ДАННЫХ
+            // ==========================================
+            try
             {
-                NavigationService.GoBack();
+                // Создаем новую запись для таблицы UserGame
+                UserGame newPurchase = new UserGame
+                {
+                    User_Id = App.CurrentUser.Id_User, // Берем ID авторизованного пользователя
+                    Game_Id = _currentGame.Id_Game,    // Берем ID покупаемой игры
+                    PurchaseDate = DateTime.Now        // Фиксируем дату и время покупки
+                };
+
+                // Добавляем запись в контекст Entity Framework
+                App.Context.UserGame.Add(newPurchase);
+
+                // Сохраняем изменения прямо в SQL Server
+                App.Context.SaveChanges();
+
+                // Сообщаем об успехе
+                MessageBox.Show("Оплата прошла успешно! Игра добавлена в вашу библиотеку.", "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
+
+                // Возвращаемся обратно
+                if (NavigationService.CanGoBack)
+                {
+                    NavigationService.GoBack();
+                }
+            }
+            catch (Exception ex)
+            {
+                // Если вдруг база данных недоступна или произошла ошибка
+                MessageBox.Show("Ошибка при сохранении покупки в БД: " + ex.Message, "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
