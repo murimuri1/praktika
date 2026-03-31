@@ -36,7 +36,6 @@
                                Margin="0,0,0,8"/>
 
                     <Border Background="#171a21" CornerRadius="4" Margin="0,0,0,25" BorderBrush="#2a475e" BorderThickness="1">
-                        <!-- Изменено имя на TBLogin для соответствия C# коду -->
                         <TextBox x:Name="TBLogin" 
                                  Height="45" 
                                  Background="Transparent" 
@@ -44,7 +43,9 @@
                                  Foreground="White" 
                                  FontSize="16" 
                                  VerticalContentAlignment="Center" 
-                                 Padding="12,0"/>
+                                 HorizontalContentAlignment="Left"
+                                 Padding="12,0"
+                                 CaretBrush="White" Width="312"/>
                     </Border>
 
                     <TextBlock Text="ПАРОЛЬ" 
@@ -54,7 +55,6 @@
                                Margin="0,0,0,8"/>
 
                     <Border Background="#171a21" CornerRadius="4" Margin="0,0,0,30" BorderBrush="#2a475e" BorderThickness="1">
-                        <!-- Изменено имя на TBPassword для соответствия C# коду -->
                         <PasswordBox x:Name="TBPassword" 
                                      Height="45" 
                                      Background="Transparent" 
@@ -62,7 +62,9 @@
                                      Foreground="White" 
                                      FontSize="16" 
                                      VerticalContentAlignment="Center" 
-                                     Padding="12,0"/>
+                                     HorizontalContentAlignment="Left"
+                                     Padding="12,0"
+                                     CaretBrush="White"/>
                     </Border>
 
                     <!-- Кнопка "Войти" -->
@@ -108,7 +110,6 @@
 
                     <!-- Белый фон для QR-кода, чтобы он хорошо читался даже если картинка с прозрачностью -->
                     <Border Background="White" CornerRadius="8" Padding="15" Width="220" Height="220">
-                        <!-- ВСТАВЬ СВОЮ КАРТИНКУ QR КОДА СЮДА -->
                         <Image Source="/Resurs/qr_code.png" Stretch="Uniform"/>
                     </Border>
                 </StackPanel>

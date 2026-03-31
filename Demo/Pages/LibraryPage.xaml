@@ -12,9 +12,7 @@
     <Grid Background="#1b2838">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
-            <!-- Заголовок раздела -->
             <RowDefinition Height="*"/>
-            <!-- Список игр -->
         </Grid.RowDefinitions>
 
         <!-- ВЕРХНЯЯ ПАНЕЛЬ БИБЛИОТЕКИ -->
@@ -37,20 +35,23 @@
 
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <!-- Карточка игры: ширина 280, стиль как в каталоге -->
+                        <!-- Карточка игры -->
                         <Border x:Name="CardBorder" Width="280" Margin="12" Background="#2a475e" CornerRadius="12">
                             <Border.Effect>
                                 <DropShadowEffect BlurRadius="25" ShadowDepth="6" Opacity="0.5"/>
                             </Border.Effect>
 
                             <StackPanel>
-                                <!-- Изображение: высота 280 под твои квадратные фото -->
+                                <!-- Изображение -->
                                 <Border CornerRadius="12,12,0,0" ClipToBounds="True" Background="#171a21">
-                                    <Image Height="280" Source="{Binding ImagePath}" Stretch="UniformToFill">
-                                        <!-- Эффект затемнения если игра не установлена (пример) -->
+                                    <Image Height="280" Source="{Binding Game.ImagePath}" Stretch="UniformToFill">
                                         <Image.Style>
                                             <Style TargetType="Image">
+                                                <!-- Затемняем картинку, если игра не установлена -->
                                                 <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding IsInstalled}" Value="False">
+                                                        <Setter Property="Opacity" Value="0.4"/>
+                                                    </DataTrigger>
                                                     <DataTrigger Binding="{Binding IsMouseOver, RelativeSource={RelativeSource AncestorType=Border}}" Value="True">
                                                         <Setter Property="Opacity" Value="0.9"/>
                                                     </DataTrigger>
@@ -64,42 +65,109 @@
                                     <StackPanel>
                                         <!-- Жанр и Разработчик -->
                                         <TextBlock Foreground="#a3db59" FontSize="11" FontWeight="Bold" Margin="0,0,0,6">
-                                            <Run Text="{Binding Genre.Name_Genre}"/>
+                                            <Run Text="{Binding Game.Genre.Name_Genre}"/>
                                             <Run Text=" • "/>
-                                            <Run Text="{Binding Developer.Name_Developer}"/>
+                                            <Run Text="{Binding Game.Developer.Name_Developer}"/>
                                         </TextBlock>
 
                                         <!-- Название игры -->
-                                        <TextBlock Text="{Binding Title}" Foreground="White" FontSize="20" FontWeight="Bold" Margin="0,0,0,15" TextWrapping="Wrap"/>
+                                        <TextBlock Text="{Binding Game.Title}" Foreground="White" FontSize="20" FontWeight="Bold" Margin="0,0,0,15" TextWrapping="Wrap"/>
 
-                                        <!-- Кнопка ИГРАТЬ -->
-                                        <Button Content="ИГРАТЬ" 
-                                                Click="Play_Click" 
-                                                Background="#4c6b22" 
-                                                Foreground="White" 
-                                                FontWeight="Bold" 
-                                                BorderThickness="0" 
-                                                Height="40" 
-                                                Cursor="Hand">
-                                            <Button.Template>
-                                                <ControlTemplate TargetType="Button">
-                                                    <Border x:Name="btn" Background="{TemplateBinding Background}" CornerRadius="4">
-                                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                                    </Border>
-                                                    <ControlTemplate.Triggers>
-                                                        <Trigger Property="IsMouseOver" Value="True">
-                                                            <Setter TargetName="btn" Property="Background" Value="#5da821"/>
-                                                        </Trigger>
-                                                    </ControlTemplate.Triggers>
-                                                </ControlTemplate>
-                                            </Button.Template>
-                                        </Button>
+                                        <!-- ПАНЕЛЬ КНОПОК УПРАВЛЕНИЯ -->
+                                        <Grid Height="40">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+
+                                            <!-- КНОПКА ИГРАТЬ -->
+                                            <Button Grid.Column="0" Content="ИГРАТЬ" Click="Play_Click" Foreground="White" FontWeight="Bold" BorderThickness="0" Cursor="Hand">
+                                                <Button.Style>
+                                                    <Style TargetType="Button">
+                                                        <Setter Property="Visibility" Value="Visible"/>
+                                                        <Style.Triggers>
+                                                            <!-- Прячем кнопку, если игра удалена -->
+                                                            <DataTrigger Binding="{Binding IsInstalled}" Value="False">
+                                                                <Setter Property="Visibility" Value="Collapsed"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </Button.Style>
+                                                <Button.Template>
+                                                    <ControlTemplate TargetType="Button">
+                                                        <Border x:Name="btn" Background="#4c6b22" CornerRadius="4">
+                                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                        </Border>
+                                                        <ControlTemplate.Triggers>
+                                                            <Trigger Property="IsMouseOver" Value="True">
+                                                                <Setter TargetName="btn" Property="Background" Value="#5da821"/>
+                                                            </Trigger>
+                                                        </ControlTemplate.Triggers>
+                                                    </ControlTemplate>
+                                                </Button.Template>
+                                            </Button>
+
+                                            <!-- КНОПКА УДАЛИТЬ (иконка корзины) -->
+                                            <Button Grid.Column="1" Content="🗑" ToolTip="Удалить игру" Click="Delete_Click" Foreground="#c5c3c0" FontSize="18" BorderThickness="0" Cursor="Hand" Width="40" Margin="8,0,0,0">
+                                                <Button.Style>
+                                                    <Style TargetType="Button">
+                                                        <Setter Property="Visibility" Value="Visible"/>
+                                                        <Style.Triggers>
+                                                            <!-- Прячем кнопку, если игра удалена -->
+                                                            <DataTrigger Binding="{Binding IsInstalled}" Value="False">
+                                                                <Setter Property="Visibility" Value="Collapsed"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </Button.Style>
+                                                <Button.Template>
+                                                    <ControlTemplate TargetType="Button">
+                                                        <Border x:Name="btn" Background="#3d4450" CornerRadius="4">
+                                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                        </Border>
+                                                        <ControlTemplate.Triggers>
+                                                            <Trigger Property="IsMouseOver" Value="True">
+                                                                <Setter TargetName="btn" Property="Background" Value="#a32b2b"/>
+                                                                <Setter Property="Foreground" Value="White"/>
+                                                            </Trigger>
+                                                        </ControlTemplate.Triggers>
+                                                    </ControlTemplate>
+                                                </Button.Template>
+                                            </Button>
+
+                                            <!-- КНОПКА УСТАНОВИТЬ -->
+                                            <Button Grid.Column="0" Grid.ColumnSpan="2" Content="УСТАНОВИТЬ" Click="Install_Click" Foreground="White" FontWeight="Bold" BorderThickness="0" Cursor="Hand">
+                                                <Button.Style>
+                                                    <Style TargetType="Button">
+                                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                                        <Style.Triggers>
+                                                            <!-- Показываем кнопку, если игра удалена -->
+                                                            <DataTrigger Binding="{Binding IsInstalled}" Value="False">
+                                                                <Setter Property="Visibility" Value="Visible"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </Button.Style>
+                                                <Button.Template>
+                                                    <ControlTemplate TargetType="Button">
+                                                        <Border x:Name="btn" Background="#1a9fff" CornerRadius="4">
+                                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                        </Border>
+                                                        <ControlTemplate.Triggers>
+                                                            <Trigger Property="IsMouseOver" Value="True">
+                                                                <Setter TargetName="btn" Property="Background" Value="#31b0ff"/>
+                                                            </Trigger>
+                                                        </ControlTemplate.Triggers>
+                                                    </ControlTemplate>
+                                                </Button.Template>
+                                            </Button>
+                                        </Grid>
+
                                     </StackPanel>
                                 </Border>
                             </StackPanel>
                         </Border>
 
-                        <!-- Триггер наведения на всю карточку -->
                         <DataTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
                                 <Setter TargetName="CardBorder" Property="Background" Value="#355a77"/>
