@@ -7,44 +7,70 @@
       FontFamily="Segoe UI">
 
     <Page.Resources>
-        <!-- Подключаем наши конвертеры для звездочек -->
         <local:RatingToStarsConverter x:Key="RatingToStarsConverter"/>
         <local:RatingToColorConverter x:Key="RatingToColorConverter"/>
 
+        <!-- СТИЛЬ ДЛЯ ПУНКТОВ ВЫПАДАЮЩЕГО СПИСКА -->
         <Style TargetType="ComboBoxItem">
             <Setter Property="Background" Value="#1b2838"/>
             <Setter Property="Foreground" Value="White"/>
             <Setter Property="Padding" Value="10,8"/>
             <Setter Property="BorderThickness" Value="0"/>
-            <Style.Triggers>
-                <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="Background" Value="#1a9fff"/>
-                </Trigger>
-                <Trigger Property="IsSelected" Value="True">
-                    <Setter Property="Background" Value="#2a475e"/>
-                    <Setter Property="Foreground" Value="White"/>
-                </Trigger>
-            </Style.Triggers>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ComboBoxItem">
+                        <Border x:Name="gd" Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}">
+                            <ContentPresenter />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="gd" Property="Background" Value="#1a9fff"/>
+                            </Trigger>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter TargetName="gd" Property="Background" Value="#2a475e"/>
+                                <Setter Property="Foreground" Value="White"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
         </Style>
 
+        <!-- СТИЛЬ ДЛЯ САМОГО COMBOBOX (СОРТИРОВКИ) -->
         <Style TargetType="ComboBox">
             <Setter Property="Background" Value="#171a21"/>
             <Setter Property="Foreground" Value="White"/>
             <Setter Property="BorderBrush" Value="#2a475e"/>
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="Padding" Value="15,0,30,0"/>
+            <Setter Property="Height" Value="42"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="ComboBox">
                         <Grid>
                             <!-- Основной темный фон и рамка -->
-                            <Border x:Name="border" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="4">
-                                <ToggleButton x:Name="toggleButton" BorderThickness="0" Background="Transparent" Focusable="false" IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}" ClickMode="Press">
+                            <Border x:Name="border" 
+                                    Background="{TemplateBinding Background}" 
+                                    BorderBrush="{TemplateBinding BorderBrush}" 
+                                    BorderThickness="{TemplateBinding BorderThickness}" 
+                                    CornerRadius="4">
+                                <ToggleButton x:Name="toggleButton" 
+                                              BorderThickness="0" 
+                                              Background="Transparent" 
+                                              Focusable="false" 
+                                              IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}" 
+                                              ClickMode="Press">
                                     <ToggleButton.Template>
                                         <ControlTemplate TargetType="ToggleButton">
                                             <Border Background="Transparent">
-                                                <!-- Кастомная синяя стрелочка -->
-                                                <Path x:Name="arrow" Data="M 0 0 L 5 5 L 10 0 Z" Fill="#1a9fff" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,15,0" Stretch="None"/>
+                                                <!-- Кастомная голубая стрелочка -->
+                                                <Path x:Name="arrow" 
+                                                      Data="M 0 0 L 5 5 L 10 0 Z" 
+                                                      Fill="#1a9fff" 
+                                                      HorizontalAlignment="Right" 
+                                                      VerticalAlignment="Center" 
+                                                      Margin="0,0,15,0" 
+                                                      Stretch="None"/>
                                             </Border>
                                         </ControlTemplate>
                                     </ToggleButton.Template>
@@ -52,11 +78,29 @@
                             </Border>
 
                             <!-- Выбранный текст -->
-                            <ContentPresenter x:Name="contentPresenter" Content="{TemplateBinding SelectionBoxItem}" ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}" ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}" HorizontalAlignment="Left" Margin="{TemplateBinding Padding}" VerticalAlignment="Center" IsHitTestVisible="False"/>
+                            <ContentPresenter x:Name="contentPresenter" 
+                                              Content="{TemplateBinding SelectionBoxItem}" 
+                                              ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}" 
+                                              ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}" 
+                                              HorizontalAlignment="Left" 
+                                              Margin="{TemplateBinding Padding}" 
+                                              VerticalAlignment="Center" 
+                                              IsHitTestVisible="False"/>
 
                             <!-- Выпадающее меню -->
-                            <Popup x:Name="popup" AllowsTransparency="True" IsOpen="{TemplateBinding IsDropDownOpen}" Placement="Bottom" PopupAnimation="Slide">
-                                <Border x:Name="dropDownBorder" Background="#213245" BorderBrush="#1a9fff" BorderThickness="1" CornerRadius="4" MinWidth="{TemplateBinding ActualWidth}" MaxHeight="{TemplateBinding MaxDropDownHeight}">
+                            <Popup x:Name="popup" 
+                                   AllowsTransparency="True" 
+                                   IsOpen="{TemplateBinding IsDropDownOpen}" 
+                                   Placement="Bottom" 
+                                   PopupAnimation="Slide">
+                                <Border x:Name="dropDownBorder" 
+                                        Background="#213245" 
+                                        BorderBrush="#1a9fff" 
+                                        BorderThickness="1" 
+                                        CornerRadius="4" 
+                                        MinWidth="{TemplateBinding ActualWidth}" 
+                                        MaxHeight="{TemplateBinding MaxDropDownHeight}"
+                                        Margin="0,2,0,0">
                                     <ScrollViewer x:Name="dropDownScrollViewer">
                                         <ItemsPresenter x:Name="ItemsPresenter" KeyboardNavigation.DirectionalNavigation="Contained"/>
                                     </ScrollViewer>
@@ -64,7 +108,7 @@
                             </Popup>
                         </Grid>
 
-                        <!-- Эффекты при наведении и открытии списка -->
+                        <!-- Эффекты при наведении и открытии -->
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
                                 <Setter TargetName="border" Property="BorderBrush" Value="#1a9fff"/>
@@ -86,46 +130,55 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <!-- ПАНЕЛЬ ПОИСКА И СОРТИРОВКИ -->
-        <Border Grid.Row="0" Background="#213245" Margin="30,25,30,10" CornerRadius="8" Padding="25,20">
+        <!-- ВЕРХНЯЯ ПАНЕЛЬ С ЛОГОТИПОМ И ИНСТРУМЕНТАМИ -->
+        <Border Grid.Row="0" Background="#213245" Margin="30,25,30,10" CornerRadius="8" Padding="20">
             <Grid>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="Auto"/>
+                    <!-- Лого -->
+                    <ColumnDefinition Width="*"/>
+                    <!-- Поиск -->
+                    <ColumnDefinition Width="Auto"/>
+                    <!-- Сортировка -->
                 </Grid.ColumnDefinitions>
 
-                <StackPanel Grid.Column="0" Orientation="Horizontal">
-                    <TextBlock Text="ПОИСК" Foreground="#1a9fff" FontWeight="Bold" FontSize="11" VerticalAlignment="Center" Margin="0,0,15,0"/>
+                <!-- ЛОГОТИП -->
+                <Image Grid.Column="0" Source="/Sourse/logo.png" Height="50" Margin="0,0,30,0" VerticalAlignment="Center"/>
+
+                <!-- ПОИСК -->
+                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                    <TextBlock Text="ПОИСК" Foreground="#1a9fff" FontWeight="Bold" FontSize="11" Margin="0,0,15,0" VerticalAlignment="Center"/>
                     <Border Background="#171a21" CornerRadius="4" Width="380" Height="42" BorderBrush="#1a9fff" BorderThickness="1">
                         <TextBox x:Name="TBoxSearch" 
                                  Background="Transparent" 
                                  BorderThickness="0" 
                                  Foreground="White" 
                                  VerticalContentAlignment="Center" 
-                                 Padding="12,2,12,0" 
+                                 HorizontalContentAlignment="Left"
+                                 TextAlignment="Left"
+                                 Width="Auto"
+                                 HorizontalAlignment="Stretch"
+                                 Margin="0"
+                                 Padding="12,0" 
                                  FontSize="18"
                                  CaretBrush="White"
                                  TextChanged="TBoxSearch_TextChanged"/>
                     </Border>
                 </StackPanel>
 
-                <StackPanel Grid.Column="1" Orientation="Horizontal">
-                    <TextBlock Text="СОРТИРОВАТЬ" Foreground="#1a9fff" FontWeight="Bold" FontSize="11" VerticalAlignment="Center" Margin="35,0,15,0"/>
-                    <Border CornerRadius="4" Width="260" Height="42" ClipToBounds="True">
-                        <ComboBox x:Name="ComboSort" 
-                                  VerticalContentAlignment="Center"
-                                  FontSize="14"
-                                  SelectionChanged="ComboSort_SelectionChanged">
-                            <ComboBoxItem Content="По умолчанию" IsSelected="True"/>
-                            <ComboBoxItem Content="Цена (сначала дешевле)" />
-                            <ComboBoxItem Content="Цена (сначала дороже)" />
-                        </ComboBox>
-                    </Border>
+                <!-- СОРТИРОВКА -->
+                <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                    <TextBlock Text="СОРТИРОВАТЬ" Foreground="#1a9fff" FontWeight="Bold" FontSize="11" Margin="0,0,15,0" VerticalAlignment="Center"/>
+                    <ComboBox x:Name="ComboSort" Width="220" Height="42" SelectionChanged="ComboSort_SelectionChanged">
+                        <ComboBoxItem Content="По умолчанию" IsSelected="True"/>
+                        <ComboBoxItem Content="Цена (сначала дешевле)" />
+                        <ComboBoxItem Content="Цена (сначала дороже)" />
+                    </ComboBox>
                 </StackPanel>
             </Grid>
         </Border>
 
-        <!-- СПИСОК ИГР (КАРТОЧКИ) -->
+        <!-- СПИСОК ИГР -->
         <ScrollViewer Grid.Row="1" Margin="20,5,20,20">
             <ItemsControl x:Name="GameList">
                 <ItemsControl.ItemsPanel>
@@ -137,72 +190,38 @@
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
                         <Border x:Name="CardBorder" Width="280" Margin="12" Background="#2a475e" CornerRadius="12">
-                            <Border.Effect>
-                                <DropShadowEffect BlurRadius="20" ShadowDepth="4" Opacity="0.4"/>
-                            </Border.Effect>
-
                             <StackPanel>
-                                <Border CornerRadius="12,12,0,0" ClipToBounds="True" Background="#171a21">
+                                <Border CornerRadius="12,12,0,0" ClipToBounds="True">
                                     <Image Height="280" Source="{Binding ImagePath}" Stretch="UniformToFill"/>
                                 </Border>
-
                                 <Border Padding="18">
                                     <StackPanel>
                                         <TextBlock Foreground="#a3db59" FontSize="11" FontWeight="Bold" Margin="0,0,0,6">
-                                            <Run Text="{Binding Genre.Name_Genre}"/>
-                                            <Run Text=" • "/>
-                                            <Run Text="{Binding Developer.Name_Developer}"/>
+                                            <Run Text="{Binding Genre.Name_Genre}"/> • <Run Text="{Binding Developer.Name_Developer}"/>
                                         </TextBlock>
+                                        <TextBlock Text="{Binding Title}" Foreground="White" FontSize="18" FontWeight="Bold" Margin="0,0,0,10" Height="50" TextWrapping="Wrap"/>
 
-                                        <TextBlock Text="{Binding Title}" Foreground="White" FontSize="20" FontWeight="Bold" Margin="0,0,0,10" TextWrapping="Wrap"/>
-
-                                        <TextBlock Text="{Binding Description}" Foreground="#c5c3c0" FontSize="12" Height="45" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" Margin="0,0,0,15"/>
-
-                                        <!-- Рейтинг и Цена -->
                                         <Grid Margin="0,0,0,15">
-
-                                            <!-- Левая часть: Цифра + Звездочки -->
-                                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
-
-                                                <!-- Блок с цифровым рейтингом -->
-                                                <Border Background="#4c6b22" CornerRadius="2" Padding="8,3" Margin="0,0,8,0">
-                                                    <TextBlock Text="{Binding RatingText}" Foreground="#beee11" FontWeight="Bold" FontSize="13"/>
+                                            <StackPanel Orientation="Horizontal">
+                                                <Border Background="#4c6b22" CornerRadius="2" Padding="6,2" Margin="0,0,8,0">
+                                                    <TextBlock Text="{Binding RatingText}" Foreground="#beee11" FontWeight="Bold"/>
                                                 </Border>
-
-                                                <!-- ДИНАМИЧЕСКИЕ ЗВЕЗДОЧКИ (Используют конвертеры) -->
                                                 <TextBlock Text="{Binding RatingText, Converter={StaticResource RatingToStarsConverter}}" 
-                                                           Foreground="{Binding RatingText, Converter={StaticResource RatingToColorConverter}}" 
-                                                           FontSize="18" 
-                                                           VerticalAlignment="Center">
-                                                    <TextBlock.Effect>
-                                                        <!-- Легкое свечение для красоты -->
-                                                        <DropShadowEffect BlurRadius="4" ShadowDepth="0" Opacity="0.6" Color="{Binding Foreground.Color, RelativeSource={RelativeSource AncestorType=TextBlock}}"/>
-                                                    </TextBlock.Effect>
-                                                </TextBlock>
-
+                                                           Foreground="{Binding RatingText, Converter={StaticResource RatingToColorConverter}}" FontSize="16"/>
                                             </StackPanel>
-
-                                            <!-- Правая часть: Цена -->
-                                            <TextBlock Text="{Binding PriceText}" HorizontalAlignment="Right" Foreground="White" FontSize="18" FontWeight="Bold" VerticalAlignment="Center"/>
+                                            <TextBlock Text="{Binding PriceText}" HorizontalAlignment="Right" Foreground="White" FontSize="16" FontWeight="Bold"/>
                                         </Grid>
 
-                                        <StackPanel Orientation="Vertical">
-                                            <Button Content="КУПИТЬ" Click="Buy_Click" Background="#1a9fff" Foreground="White" FontWeight="Bold" BorderThickness="0" Height="40" Margin="0,0,0,8" Cursor="Hand"/>
+                                        <Button Content="КУПИТЬ" Click="Buy_Click" Background="#1a9fff" Foreground="White" FontWeight="Bold" BorderThickness="0" Height="35" Margin="0,0,0,8" Cursor="Hand"/>
 
-                                            <UniformGrid Columns="2" Visibility="{Binding Source={x:Static Application.Current}, Path=MainWindow.Tag}">
-                                                <Button Content="ПРАВКА" Click="Edit_Click" Background="#3d4450" Foreground="White" FontSize="11" Height="28" Margin="0,0,4,0" BorderThickness="0" Cursor="Hand"/>
-                                                <Button Content="УДАЛИТЬ" Click="Delete_Click" Background="#a32b2b" Foreground="White" FontSize="11" Height="28" Margin="4,0,0,0" BorderThickness="0" Cursor="Hand"/>
-                                            </UniformGrid>
-                                        </StackPanel>
+                                        <UniformGrid Columns="2" Visibility="{Binding Source={x:Static Application.Current}, Path=MainWindow.Tag}">
+                                            <Button Content="ПРАВКА" Click="Edit_Click" Background="#3d4450" Foreground="White" FontSize="10" Height="25" Margin="0,0,2,0"/>
+                                            <Button Content="УДАЛИТЬ" Click="Delete_Click" Background="#a32b2b" Foreground="White" FontSize="10" Height="25" Margin="2,0,0,0"/>
+                                        </UniformGrid>
                                     </StackPanel>
                                 </Border>
                             </StackPanel>
                         </Border>
-                        <DataTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="CardBorder" Property="Background" Value="#355a77"/>
-                            </Trigger>
-                        </DataTemplate.Triggers>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>

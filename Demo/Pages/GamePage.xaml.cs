@@ -74,11 +74,6 @@ namespace Demo.Pages
         {
             if (sender is Button btn && btn.DataContext is Game game)
             {
-                if (game.IsOwned)
-                {
-                    MessageBox.Show($"Игра '{game.Title}' уже есть в вашей библиотеке!", "Информация", MessageBoxButton.OK, MessageBoxImage.Information);
-                    return;
-                }
                 NavigationService.Navigate(new PayPage(game));
             }
         }
@@ -95,7 +90,7 @@ namespace Demo.Pages
         {
             if (sender is Button btn && btn.DataContext is Game game)
             {
-                var result = MessageBox.Show($"Вы действительно хотите безвозвратно удалить игру '{game.Title}'?", "Подтверждение удаления", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+                var result = MessageBox.Show($"Вы действительно хотите удалить игру '{game.Title}'?", "Удаление", MessageBoxButton.YesNo, MessageBoxImage.Warning);
 
                 if (result == MessageBoxResult.Yes)
                 {
@@ -105,40 +100,37 @@ namespace Demo.Pages
                 }
             }
         }
+
+        private void AddGame_Click(object sender, RoutedEventArgs e)
+        {
+            NavigationService.Navigate(new AddEditGamePage(null));
+        }
     }
 
     // ==========================================================
     // КОНВЕРТЕРЫ ДЛЯ ОТОБРАЖЕНИЯ ЗВЕЗДОЧЕК И ИХ ЦВЕТА
     // ==========================================================
 
-    /// <summary>
-    /// Преобразует числовой рейтинг в строку из звездочек (от 1 до 5)
-    /// </summary>
     public class RatingToStarsConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value is string ratingText)
             {
-                // Ищем в строке цифры (например из "★ 4,0" достаем "4,0")
                 var match = Regex.Match(ratingText, @"\d+([.,]\d+)?");
                 if (match.Success && double.TryParse(match.Value.Replace(',', '.'), NumberStyles.Any, CultureInfo.InvariantCulture, out double rating))
                 {
-                    // Округляем до ближайшего целого, чтобы получить количество звезд
                     int starsCount = (int)Math.Round(rating);
-                    starsCount = Math.Max(0, Math.Min(5, starsCount)); // Защита от выхода за пределы
+                    starsCount = Math.Max(0, Math.Min(5, starsCount));
                     return new string('★', starsCount);
                 }
             }
-            return ""; // Если оценки нет, возвращаем пустоту
+            return "";
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => null;
     }
 
-    /// <summary>
-    /// Выбирает цвет для звездочек в зависимости от оценки
-    /// </summary>
     public class RatingToColorConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
@@ -149,14 +141,9 @@ namespace Demo.Pages
                 if (match.Success && double.TryParse(match.Value.Replace(',', '.'), NumberStyles.Any, CultureInfo.InvariantCulture, out double rating))
                 {
                     int starsCount = (int)Math.Round(rating);
-
-                    if (starsCount <= 2)
-                        return new SolidColorBrush(Color.FromRgb(255, 76, 76)); // Красный (1-2)
-
-                    if (starsCount == 3)
-                        return new SolidColorBrush(Color.FromRgb(255, 204, 0)); // Желтый (3)
-
-                    return new SolidColorBrush(Color.FromRgb(163, 219, 89));    // Зеленый (4-5)
+                    if (starsCount <= 2) return new SolidColorBrush(Color.FromRgb(255, 76, 76)); // Красный
+                    if (starsCount == 3) return new SolidColorBrush(Color.FromRgb(255, 204, 0)); // Желтый
+                    return new SolidColorBrush(Color.FromRgb(163, 219, 89)); // Зеленый
                 }
             }
             return new SolidColorBrush(Colors.Transparent);

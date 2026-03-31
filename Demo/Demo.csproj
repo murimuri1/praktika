@@ -189,8 +189,6 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resurs\picture.png" />
-    <Resource Include="Sourse\Icon.png" />
-    <Resource Include="Sourse\Icon.ico" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
@@ -207,6 +205,8 @@
       <LastGenOutput>Model1.cs</LastGenOutput>
     </Content>
     <Resource Include="Resurs\qr_code.png" />
+    <Resource Include="Sourse\app_icon.png" />
+    <Resource Include="Sourse\logo.png" />
     <Resource Include="Resurs\ffh.jpg" />
     <Resource Include="Resurs\wukong.jpg" />
     <Resource Include="Resurs\cs2.jpg" />

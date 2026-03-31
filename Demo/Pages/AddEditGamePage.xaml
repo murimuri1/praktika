@@ -1,25 +1,174 @@
 ﻿<Page x:Class="Demo.Pages.AddEditGamePage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-      Title="Игра">
+      Title="ДОБАВЛЕНИЕ ИГРЫ"
+      FontFamily="Segoe UI">
+
+    <Page.Resources>
+        <!-- СТИЛЬ ДЛЯ ПУНКТОВ ВЫПАДАЮЩЕГО СПИСКА -->
+        <Style TargetType="ComboBoxItem">
+            <Setter Property="Background" Value="#1b2838"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Padding" Value="10,8"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ComboBoxItem">
+                        <Border x:Name="gd" Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}">
+                            <ContentPresenter />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="gd" Property="Background" Value="#1a9fff"/>
+                            </Trigger>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter TargetName="gd" Property="Background" Value="#2a475e"/>
+                                <Setter Property="Foreground" Value="White"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- СТИЛЬ ДЛЯ САМОГО COMBOBOX -->
+        <Style TargetType="ComboBox">
+            <Setter Property="Background" Value="#171a21"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderBrush" Value="#2a475e"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="15,0,30,0"/>
+            <Setter Property="Height" Value="35"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ComboBox">
+                        <Grid>
+                            <!-- Основной фон -->
+                            <Border x:Name="border" 
+                                    Background="{TemplateBinding Background}" 
+                                    BorderBrush="{TemplateBinding BorderBrush}" 
+                                    BorderThickness="{TemplateBinding BorderThickness}" 
+                                    CornerRadius="4">
+                                <ToggleButton x:Name="toggleButton" 
+                                              BorderThickness="0" 
+                                              Background="Transparent" 
+                                              Focusable="false" 
+                                              IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}" 
+                                              ClickMode="Press">
+                                    <ToggleButton.Template>
+                                        <ControlTemplate TargetType="ToggleButton">
+                                            <Border Background="Transparent">
+                                                <Path x:Name="arrow" 
+                                                      Data="M 0 0 L 5 5 L 10 0 Z" 
+                                                      Fill="#1a9fff" 
+                                                      HorizontalAlignment="Right" 
+                                                      VerticalAlignment="Center" 
+                                                      Margin="0,0,15,0" 
+                                                      Stretch="None"/>
+                                            </Border>
+                                        </ControlTemplate>
+                                    </ToggleButton.Template>
+                                </ToggleButton>
+                            </Border>
+
+                            <!-- Выбранный элемент -->
+                            <ContentPresenter x:Name="contentPresenter" 
+                                              Content="{TemplateBinding SelectionBoxItem}" 
+                                              ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}" 
+                                              ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}" 
+                                              HorizontalAlignment="Left" 
+                                              Margin="{TemplateBinding Padding}" 
+                                              VerticalAlignment="Center" 
+                                              IsHitTestVisible="False"/>
+
+                            <!-- Выпадающее меню -->
+                            <Popup x:Name="popup" AllowsTransparency="True" IsOpen="{TemplateBinding IsDropDownOpen}" Placement="Bottom" PopupAnimation="Slide">
+                                <Border x:Name="dropDownBorder" 
+                                        Background="#213245" 
+                                        BorderBrush="#1a9fff" 
+                                        BorderThickness="1" 
+                                        CornerRadius="4" 
+                                        MinWidth="{TemplateBinding ActualWidth}" 
+                                        MaxHeight="{TemplateBinding MaxDropDownHeight}" 
+                                        Margin="0,2,0,0">
+                                    <ScrollViewer x:Name="dropDownScrollViewer">
+                                        <ItemsPresenter x:Name="ItemsPresenter" KeyboardNavigation.DirectionalNavigation="Contained"/>
+                                    </ScrollViewer>
+                                </Border>
+                            </Popup>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="BorderBrush" Value="#1a9fff"/>
+                            </Trigger>
+                            <Trigger Property="IsDropDownOpen" Value="True">
+                                <Setter TargetName="border" Property="BorderBrush" Value="#1a9fff"/>
+                                <Setter TargetName="border" Property="Background" Value="#2a475e"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Page.Resources>
 
     <Grid Background="#1b2838">
+        <Border Width="600" VerticalAlignment="Center" HorizontalAlignment="Center" Background="#213245" CornerRadius="12" Padding="40">
+            <Border.Effect>
+                <DropShadowEffect BlurRadius="30" ShadowDepth="0" Opacity="0.5"/>
+            </Border.Effect>
 
-        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+            <StackPanel>
+                <TextBlock x:Name="TxtHeader" Text="ДОБАВЛЕНИЕ ИГРЫ" Foreground="White" FontSize="24" FontWeight="Bold" Margin="0,0,0,30" HorizontalAlignment="Center"/>
 
-            <TextBox x:Name="TBTitle" Width="250" Margin="5"/>
-            <TextBox x:Name="TBDescription" Width="250" Margin="5"/>
-            <TextBox x:Name="TBPrice" Width="250" Margin="5"/>
-            <TextBox x:Name="TBDiscount" Width="250" Margin="5"/>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="30"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
 
-            <ComboBox x:Name="CBGenre" Width="250" Margin="5"/>
-            <ComboBox x:Name="CBDeveloper" Width="250" Margin="5"/>
-            <ComboBox x:Name="CBPublisher" Width="250" Margin="5"/>
+                    <!-- Левая колонка -->
+                    <StackPanel Grid.Column="0">
+                        <TextBlock Text="НАЗВАНИЕ" Foreground="#1a9fff" FontSize="11" FontWeight="Bold" Margin="0,0,0,5"/>
+                        <Border Background="#171a21" CornerRadius="4" Margin="0,0,0,20" BorderBrush="#2a475e" BorderThickness="1">
+                            <TextBox x:Name="TBTitle" Height="35" Foreground="White" BorderThickness="0" Background="Transparent" VerticalContentAlignment="Center" Padding="12,0" CaretBrush="White" TextAlignment="Left" HorizontalContentAlignment="Left" Width="Auto" HorizontalAlignment="Stretch" Margin="0"/>
+                        </Border>
 
-            <Button Content="Выбрать фото" Click="BtnImage_Click" Margin="5"/>
-            <Button Content="Сохранить" Click="BtnSave_Click" Margin="5"/>
+                        <TextBlock Text="ЦЕНА" Foreground="#1a9fff" FontSize="11" FontWeight="Bold" Margin="0,0,0,5"/>
+                        <Border Background="#171a21" CornerRadius="4" Margin="0,0,0,20" BorderBrush="#2a475e" BorderThickness="1">
+                            <TextBox x:Name="TBPrice" Height="35" Foreground="White" BorderThickness="0" Background="Transparent" VerticalContentAlignment="Center" Padding="12,0" CaretBrush="White" TextAlignment="Left" HorizontalContentAlignment="Left" Width="Auto" HorizontalAlignment="Stretch" Margin="0"/>
+                        </Border>
 
-        </StackPanel>
+                        <TextBlock Text="ЖАНР" Foreground="#1a9fff" FontSize="11" FontWeight="Bold" Margin="0,0,0,5"/>
+                        <ComboBox x:Name="CBGenre" Margin="0,0,0,20" DisplayMemberPath="Name_Genre" Width="Auto" HorizontalAlignment="Stretch"/>
+                    </StackPanel>
 
+                    <!-- Правая колонка -->
+                    <StackPanel Grid.Column="2">
+                        <TextBlock Text="РАЗРАБОТЧИК" Foreground="#1a9fff" FontSize="11" FontWeight="Bold" Margin="0,0,0,5"/>
+                        <ComboBox x:Name="CBDeveloper" Margin="0,0,0,20" DisplayMemberPath="Name_Developer" Width="Auto" HorizontalAlignment="Stretch"/>
+
+                        <TextBlock Text="ИЗДАТЕЛЬ" Foreground="#1a9fff" FontSize="11" FontWeight="Bold" Margin="0,0,0,5"/>
+                        <ComboBox x:Name="CBPublisher" Margin="0,0,0,20" DisplayMemberPath="Name_Publisher" Width="Auto" HorizontalAlignment="Stretch"/>
+
+                        <TextBlock Text="СКИДКА (%)" Foreground="#1a9fff" FontSize="11" FontWeight="Bold" Margin="0,0,0,5"/>
+                        <Border Background="#171a21" CornerRadius="4" Margin="0,0,0,20" BorderBrush="#2a475e" BorderThickness="1">
+                            <TextBox x:Name="TBDiscount" Height="35" Foreground="White" BorderThickness="0" Background="Transparent" VerticalContentAlignment="Center" Padding="12,0" CaretBrush="White" TextAlignment="Left" HorizontalContentAlignment="Left" Width="Auto" HorizontalAlignment="Stretch" Margin="0"/>
+                        </Border>
+                    </StackPanel>
+                </Grid>
+
+                <TextBlock Text="ОПИСАНИЕ" Foreground="#1a9fff" FontSize="11" FontWeight="Bold" Margin="0,0,0,5"/>
+                <Border Background="#171a21" CornerRadius="4" Margin="0,0,0,25" BorderBrush="#2a475e" BorderThickness="1">
+                    <TextBox x:Name="TBDescription" Height="100" Foreground="White" BorderThickness="0" Background="Transparent" TextWrapping="Wrap" Padding="12" AcceptsReturn="True" CaretBrush="White" TextAlignment="Left" HorizontalContentAlignment="Left" Width="Auto" HorizontalAlignment="Stretch" Margin="0"/>
+                </Border>
+
+                <UniformGrid Columns="2">
+                    <Button Content="СОХРАНИТЬ" Click="Save_Click" Height="45" Margin="0,0,10,0" Background="#1a9fff" Foreground="White" FontWeight="Bold" Cursor="Hand"/>
+                    <Button Content="ОТМЕНА" Click="Cancel_Click" Height="45" Margin="10,0,0,0" Background="#3d4450" Foreground="White" FontWeight="Bold" Cursor="Hand"/>
+                </UniformGrid>
+            </StackPanel>
+        </Border>
     </Grid>
 </Page>

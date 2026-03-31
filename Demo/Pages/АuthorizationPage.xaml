@@ -6,115 +6,99 @@
 
     <Grid Background="#1b2838">
 
-        <!-- Центрированная панель авторизации -->
-        <Border HorizontalAlignment="Center" 
-                VerticalAlignment="Center" 
-                Background="#213245" 
-                Padding="40,50" 
-                CornerRadius="8">
-            <Border.Effect>
-                <DropShadowEffect BlurRadius="40" ShadowDepth="0" Opacity="0.5"/>
-            </Border.Effect>
+        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+            <!-- Название магазина -->
+            <TextBlock HorizontalAlignment="Center" Margin="0,0,0,30" FontSize="48" FontWeight="Bold">
+                <Run Text="Game" Foreground="White"/>
+                <Run Text="Shop" Foreground="#1a9fff"/>
+            </TextBlock>
 
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <!-- Левая колонка (Форма) -->
-                    <ColumnDefinition Width="320"/>
-                    <!-- Отступ между колонками -->
-                    <ColumnDefinition Width="50"/>
-                    <!-- Правая колонка (QR) -->
-                    <ColumnDefinition Width="220"/>
-                </Grid.ColumnDefinitions>
+            <Border Background="#213245" 
+                    Padding="40,50" 
+                    CornerRadius="8">
+                <Border.Effect>
+                    <DropShadowEffect BlurRadius="40" ShadowDepth="0" Opacity="0.5"/>
+                </Border.Effect>
 
-                <!-- ЛЕВАЯ КОЛОНКА: Ввод логина и пароля -->
-                <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="320"/>
+                        <ColumnDefinition Width="50"/>
+                        <ColumnDefinition Width="220"/>
+                    </Grid.ColumnDefinitions>
 
-                    <TextBlock Text="ЛОГИН" 
-                               Foreground="#1a9fff" 
-                               FontWeight="Bold" 
-                               FontSize="12" 
-                               Margin="0,0,0,8"/>
-
-                    <Border Background="#171a21" CornerRadius="4" Margin="0,0,0,25" BorderBrush="#2a475e" BorderThickness="1">
-                        <TextBox x:Name="TBLogin" 
-                                 Height="45" 
-                                 Background="Transparent" 
-                                 BorderThickness="0" 
-                                 Foreground="White" 
-                                 FontSize="16" 
-                                 VerticalContentAlignment="Center" 
-                                 HorizontalContentAlignment="Left"
-                                 Padding="12,0"
-                                 CaretBrush="White" Width="312"/>
-                    </Border>
-
-                    <TextBlock Text="ПАРОЛЬ" 
-                               Foreground="#5c6d7e" 
-                               FontWeight="Bold" 
-                               FontSize="12" 
-                               Margin="0,0,0,8"/>
-
-                    <Border Background="#171a21" CornerRadius="4" Margin="0,0,0,30" BorderBrush="#2a475e" BorderThickness="1">
-                        <PasswordBox x:Name="TBPassword" 
+                    <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                        <!-- Сбрасываем Margin для TextBlock, чтобы он не прыгал из-за App.xaml -->
+                        <TextBlock Text="ЛОГИН" Foreground="#1a9fff" FontWeight="Bold" FontSize="12" Margin="0,0,0,8"/>
+                        <Border Background="#171a21" CornerRadius="4" Margin="0,0,0,25" BorderBrush="#2a475e" BorderThickness="1">
+                            <!-- Width="Auto" и HorizontalAlignment="Stretch" перекрывают настройки из App.xaml -->
+                            <TextBox x:Name="TBLogin" 
                                      Height="45" 
+                                     Width="Auto"
+                                     HorizontalAlignment="Stretch"
+                                     Margin="0"
                                      Background="Transparent" 
                                      BorderThickness="0" 
                                      Foreground="White" 
                                      FontSize="16" 
                                      VerticalContentAlignment="Center" 
                                      HorizontalContentAlignment="Left"
-                                     Padding="12,0"
+                                     TextAlignment="Left"
+                                     Padding="12,0" 
                                      CaretBrush="White"/>
-                    </Border>
+                        </Border>
 
-                    <!-- Кнопка "Войти" -->
-                    <Button Content="Войти" 
-                            Height="45" 
-                            Cursor="Hand" 
-                            Click="BtnLogin_Click"
-                            Width="200"
-                            HorizontalAlignment="Left">
-                        <Button.Template>
-                            <ControlTemplate TargetType="Button">
-                                <Border x:Name="btn" Background="#1a9fff" CornerRadius="4">
-                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center">
-                                        <ContentPresenter.Resources>
-                                            <Style TargetType="TextBlock">
-                                                <Setter Property="FontWeight" Value="Bold"/>
-                                                <Setter Property="Foreground" Value="White"/>
-                                                <Setter Property="FontSize" Value="16"/>
-                                            </Style>
-                                        </ContentPresenter.Resources>
-                                    </ContentPresenter>
-                                </Border>
-                                <ControlTemplate.Triggers>
-                                    <Trigger Property="IsMouseOver" Value="True">
-                                        <Setter TargetName="btn" Property="Background" Value="#31b0ff"/>
-                                    </Trigger>
-                                    <Trigger Property="IsPressed" Value="True">
-                                        <Setter TargetName="btn" Property="Background" Value="#1588d4"/>
-                                    </Trigger>
-                                </ControlTemplate.Triggers>
-                            </ControlTemplate>
-                        </Button.Template>
-                    </Button>
-                </StackPanel>
+                        <TextBlock Text="ПАРОЛЬ" Foreground="#5c6d7e" FontWeight="Bold" FontSize="12" Margin="0,0,0,8"/>
+                        <Border Background="#171a21" CornerRadius="4" Margin="0,0,0,30" BorderBrush="#2a475e" BorderThickness="1">
+                            <PasswordBox x:Name="TBPassword" 
+                                         Height="45" 
+                                         Width="Auto"
+                                         HorizontalAlignment="Stretch"
+                                         Margin="0"
+                                         Background="Transparent" 
+                                         BorderThickness="0" 
+                                         Foreground="White" 
+                                         FontSize="16" 
+                                         VerticalContentAlignment="Center" 
+                                         HorizontalContentAlignment="Left"
+                                         Padding="12,0" 
+                                         CaretBrush="White"/>
+                        </Border>
 
-                <!-- ПРАВАЯ КОЛОНКА: QR Код -->
-                <StackPanel Grid.Column="2" VerticalAlignment="Center">
-                    <TextBlock Text="ИЛИ QR-КОД" 
-                               Foreground="#1a9fff" 
-                               FontWeight="Bold" 
-                               FontSize="12" 
-                               Margin="0,0,0,8"/>
+                        <Button Content="Войти" Height="45" Cursor="Hand" Click="BtnLogin_Click" Width="200" HorizontalAlignment="Left" Margin="0">
+                            <Button.Template>
+                                <ControlTemplate TargetType="Button">
+                                    <Border x:Name="btn" Background="#1a9fff" CornerRadius="4">
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center">
+                                            <ContentPresenter.Resources>
+                                                <Style TargetType="TextBlock">
+                                                    <Setter Property="FontWeight" Value="Bold"/>
+                                                    <Setter Property="Foreground" Value="White"/>
+                                                    <Setter Property="FontSize" Value="16"/>
+                                                    <Setter Property="Margin" Value="0"/>
+                                                    <!-- Убираем лишние отступы внутри кнопки -->
+                                                </Style>
+                                            </ContentPresenter.Resources>
+                                        </ContentPresenter>
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter TargetName="btn" Property="Background" Value="#31b0ff"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
+                    </StackPanel>
 
-                    <!-- Белый фон для QR-кода, чтобы он хорошо читался даже если картинка с прозрачностью -->
-                    <Border Background="White" CornerRadius="8" Padding="15" Width="220" Height="220">
-                        <Image Source="/Resurs/qr_code.png" Stretch="Uniform"/>
-                    </Border>
-                </StackPanel>
-
-            </Grid>
-        </Border>
+                    <StackPanel Grid.Column="2" VerticalAlignment="Center">
+                        <TextBlock Text="ИЛИ QR-КОД" Foreground="#1a9fff" FontWeight="Bold" FontSize="12" Margin="0,0,0,8"/>
+                        <Border Background="White" CornerRadius="8" Padding="15" Width="220" Height="220">
+                            <Image Source="/Resurs/qr_code.png" Stretch="Uniform"/>
+                        </Border>
+                    </StackPanel>
+                </Grid>
+            </Border>
+        </StackPanel>
     </Grid>
 </Page>

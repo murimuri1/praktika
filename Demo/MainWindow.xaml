@@ -6,7 +6,8 @@
         WindowState="Maximized"
         MinWidth="800" MinHeight="500"
         Background="#1b2838"
-        FontFamily="Segoe UI">
+        FontFamily="Segoe UI"
+        Icon="/Sourse/app_icon.png">
 
     <Grid>
         <Grid.RowDefinitions>
@@ -16,7 +17,7 @@
             <!-- Контент -->
         </Grid.RowDefinitions>
 
-        <!-- ПАНЕЛЬ НАВИГАЦИИ (СТИЛЬ STEAM) -->
+        <!-- ПАНЕЛЬ НАВИГАЦИИ -->
         <StackPanel x:Name="HeaderPanel" Grid.Row="0">
             <Grid Background="#171a21" Height="70">
                 <Grid.ColumnDefinitions>
@@ -25,15 +26,11 @@
                     <ColumnDefinition Width="*"/>
                     <!-- Меню -->
                     <ColumnDefinition Width="Auto"/>
-                    <!-- Пользователь -->
+                    <!-- Профиль -->
                 </Grid.ColumnDefinitions>
 
-                <!-- КНОПКА НАЗАД (Стрелка без лишних рамок) -->
-                <Button x:Name="BtnBack" 
-                        Grid.Column="0" 
-                        Click="BtnBack_Click" 
-                        Margin="15,0,15,0" 
-                        Cursor="Hand">
+                <!-- КНОПКА НАЗАД -->
+                <Button x:Name="BtnBack" Grid.Column="0" Click="BtnBack_Click" Margin="15,0,15,0" Cursor="Hand">
                     <Button.Template>
                         <ControlTemplate TargetType="Button">
                             <Border Background="Transparent" VerticalAlignment="Center">
@@ -54,20 +51,18 @@
                     </Button.Template>
                 </Button>
 
-                <!-- МЕНЮ: МАГАЗИН И БИБЛИОТЕКА (ВЫРАВНИВАНИЕ ПО ЦЕНТРУ) -->
+                <!-- МЕНЮ: МАГАЗИН, БИБЛИОТЕКА, ДОБАВИТЬ/ПРАВКА -->
                 <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" Margin="10,0,0,0">
 
-                    <!-- Кнопка Магазин -->
+                    <!-- Магазин -->
                     <Button Click="BtnStore_Click" Margin="0,0,40,0">
                         <Button.Template>
                             <ControlTemplate TargetType="Button">
-                                <StackPanel VerticalAlignment="Center" Cursor="Hand">
-                                    <TextBlock x:Name="txt" Text="МАГАЗИН" FontSize="22" FontWeight="SemiBold" Foreground="#c5c3c0" VerticalAlignment="Center"/>
-                                    <!-- Полоска снизу -->
+                                <StackPanel VerticalAlignment="Center" Cursor="Hand" Background="Transparent">
+                                    <TextBlock x:Name="txt" Text="МАГАЗИН" FontSize="22" FontWeight="SemiBold" Foreground="#c5c3c0"/>
                                     <Border x:Name="ind" Height="3" Background="#1a9fff" Margin="0,5,0,0" Visibility="Collapsed"/>
                                 </StackPanel>
                                 <ControlTemplate.Triggers>
-                                    <!-- Триггер подсветки по заголовку окна -->
                                     <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=Title}" Value="МАГАЗИН">
                                         <Setter TargetName="txt" Property="Foreground" Value="White"/>
                                         <Setter TargetName="ind" Property="Visibility" Value="Visible"/>
@@ -77,19 +72,44 @@
                         </Button.Template>
                     </Button>
 
-                    <!-- Кнопка Библиотека -->
-                    <Button Click="BtnLibrary_Click">
+                    <!-- Библиотека -->
+                    <Button Click="BtnLibrary_Click" Margin="0,0,40,0">
                         <Button.Template>
                             <ControlTemplate TargetType="Button">
-                                <StackPanel VerticalAlignment="Center" Cursor="Hand">
-                                    <TextBlock x:Name="txt" Text="БИБЛИОТЕКА" FontSize="22" FontWeight="SemiBold" Foreground="#c5c3c0" VerticalAlignment="Center"/>
+                                <StackPanel VerticalAlignment="Center" Cursor="Hand" Background="Transparent">
+                                    <TextBlock x:Name="txt" Text="БИБЛИОТЕКА" FontSize="22" FontWeight="SemiBold" Foreground="#c5c3c0"/>
                                     <Border x:Name="ind" Height="3" Background="#1a9fff" Margin="0,5,0,0" Visibility="Collapsed"/>
                                 </StackPanel>
                                 <ControlTemplate.Triggers>
-                                    <!-- Важно: заголовок страницы Библиотеки должен совпадать с этим Value -->
                                     <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=Title}" Value="БИБЛИОТЕКА">
                                         <Setter TargetName="txt" Property="Foreground" Value="White"/>
                                         <Setter TargetName="ind" Property="Visibility" Value="Visible"/>
+                                    </DataTrigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
+
+                    <!-- Динамическая кнопка ДОБАВИТЬ/ПРАВКА -->
+                    <Button x:Name="BtnAddGame" Click="BtnAddGame_Click" Visibility="Collapsed">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <StackPanel VerticalAlignment="Center" Cursor="Hand" Background="Transparent">
+                                    <TextBlock x:Name="txt" Text="ДОБАВИТЬ" FontSize="22" FontWeight="SemiBold" Foreground="#c5c3c0"/>
+                                    <Border x:Name="ind" Height="3" Background="#1a9fff" Margin="0,5,0,0" Visibility="Collapsed"/>
+                                </StackPanel>
+                                <ControlTemplate.Triggers>
+                                    <!-- Триггер для ДОБАВЛЕНИЯ -->
+                                    <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=Title}" Value="ДОБАВЛЕНИЕ ИГРЫ">
+                                        <Setter TargetName="txt" Property="Foreground" Value="White"/>
+                                        <Setter TargetName="ind" Property="Visibility" Value="Visible"/>
+                                        <Setter TargetName="txt" Property="Text" Value="ДОБАВИТЬ"/>
+                                    </DataTrigger>
+                                    <!-- Триггер для ПРАВКИ -->
+                                    <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=Title}" Value="РЕДАКТИРОВАНИЕ ИГРЫ">
+                                        <Setter TargetName="txt" Property="Foreground" Value="White"/>
+                                        <Setter TargetName="ind" Property="Visibility" Value="Visible"/>
+                                        <Setter TargetName="txt" Property="Text" Value="ПРАВКА"/>
                                     </DataTrigger>
                                 </ControlTemplate.Triggers>
                             </ControlTemplate>
@@ -105,11 +125,10 @@
                     </Border>
                 </StackPanel>
             </Grid>
-            <!-- Тонкая синяя линия под шапкой -->
             <Border Height="1" Background="#1a9fff" Opacity="0.3"/>
         </StackPanel>
 
-        <!-- ОСНОВНОЙ КОНТЕНТ (Frame) -->
+        <!-- КОНТЕНТ -->
         <Frame x:Name="FrameMain" Grid.Row="1" NavigationUIVisibility="Hidden"/>
     </Grid>
 </Window>

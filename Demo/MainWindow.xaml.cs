@@ -29,11 +29,16 @@ namespace Demo
             FrameMain.Navigate(new LibraryPage());
         }
 
+        // Переход на страницу добавления игры из меню
+        private void BtnAddGame_Click(object sender, RoutedEventArgs e)
+        {
+            FrameMain.Navigate(new AddEditGamePage(null));
+        }
+
         private void MainFrame_ContentRendered(object sender, EventArgs e)
         {
             if (FrameMain.Content == null) return;
 
-            // IDE0019: Pattern matching кулланыла
             if (FrameMain.Content is Page currentPage)
             {
                 this.Title = currentPage.Title;
@@ -49,7 +54,14 @@ namespace Demo
             else
             {
                 HeaderPanel.Visibility = Visibility.Visible;
-                if (App.CurrentUser != null) TxtUserName.Text = App.CurrentUser.Login;
+
+                // Проверка прав администратора для кнопки ДОБАВИТЬ
+                if (App.CurrentUser != null)
+                {
+                    TxtUserName.Text = App.CurrentUser.Login;
+                    BtnAddGame.Visibility = (App.CurrentUser.Role_Id == 1) ? Visibility.Visible : Visibility.Collapsed;
+                }
+
                 BtnBack.Visibility = FrameMain.CanGoBack ? Visibility.Visible : Visibility.Collapsed;
             }
         }

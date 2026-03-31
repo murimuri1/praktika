@@ -1,106 +1,83 @@
 ﻿using Demo.Entities;
-using Microsoft.Win32;
 using System;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Navigation;
 
 namespace Demo.Pages
 {
     public partial class AddEditGamePage : Page
     {
-        private Game _currentGame;
-        private string _imagePath;
-
-        public AddEditGamePage()
-        {
-            InitializeComponent();
-            LoadData();
-        }
+        private readonly Game _currentGame;
 
         public AddEditGamePage(Game game)
         {
             InitializeComponent();
-            LoadData();
+            _currentGame = game ?? new Game();
+            DataContext = _currentGame;
 
-            _currentGame = game;
+            // Загружаем списки для выпадающих меню
+            CBGenre.ItemsSource = App.Context.Genre.ToList();
+            CBDeveloper.ItemsSource = App.Context.Developer.ToList();
+            CBPublisher.ItemsSource = App.Context.Publisher.ToList();
 
-            TBTitle.Text = game.Title;
-            TBDescription.Text = game.Description;
-            TBPrice.Text = game.Price.ToString();
-            TBDiscount.Text = (game.Discount ?? 0).ToString();
-
-            CBGenre.SelectedItem = game.Genre?.Name_Genre;
-            CBDeveloper.SelectedItem = game.Developer?.Name_Developer;
-            CBPublisher.SelectedItem = game.Publisher?.Name_Publisher;
-
-            _imagePath = game.Image;
-        }
-
-        private void LoadData()
-        {
-            CBGenre.ItemsSource = App.Context.Genre.Select(x => x.Name_Genre).ToList();
-            CBDeveloper.ItemsSource = App.Context.Developer.Select(x => x.Name_Developer).ToList();
-            CBPublisher.ItemsSource = App.Context.Publisher.Select(x => x.Name_Publisher).ToList();
-        }
-
-        private void BtnSave_Click(object sender, RoutedEventArgs e)
-        {
-            decimal price;
-            if (!decimal.TryParse(TBPrice.Text, out price))
+            if (game != null)
             {
-                MessageBox.Show("Ошибка цены");
-                return;
-            }
+                // Устанавливаем заголовок для режима ПРАВКИ
+                this.Title = "РЕДАКТИРОВАНИЕ ИГРЫ";
+                TxtHeader.Text = "РЕДАКТИРОВАНИЕ ИГРЫ";
 
-            double discount = 0;
-            double.TryParse(TBDiscount.Text, out discount);
+                TBTitle.Text = game.Title;
+                TBDescription.Text = game.Description;
+                TBPrice.Text = game.Price.ToString();
+                TBDiscount.Text = (game.Discount * 100).ToString();
 
-            var genre = App.Context.Genre.First(x => x.Name_Genre == CBGenre.Text);
-            var developer = App.Context.Developer.First(x => x.Name_Developer == CBDeveloper.Text);
-            var publisher = App.Context.Publisher.First(x => x.Name_Publisher == CBPublisher.Text);
-
-            if (_currentGame == null)
-            {
-                var game = new Game
-                {
-                    Title = TBTitle.Text,
-                    Description = TBDescription.Text,
-                    Price = price,
-                    Discount = discount,
-                    Genre_Id = genre.Id_Genre,
-                    Developer_Id = developer.Id_Developer,
-                    Publisher_Id = publisher.Id_Publisher,
-                    Image = string.IsNullOrEmpty(_imagePath) ? "picture.png" : _imagePath
-                };
-
-                App.Context.Game.Add(game);
+                CBGenre.SelectedItem = game.Genre;
+                CBDeveloper.SelectedItem = game.Developer;
+                CBPublisher.SelectedItem = game.Publisher;
             }
             else
             {
-                _currentGame.Title = TBTitle.Text;
-                _currentGame.Description = TBDescription.Text;
-                _currentGame.Price = price;
-                _currentGame.Discount = discount;
-                _currentGame.Genre_Id = genre.Id_Genre;
-                _currentGame.Developer_Id = developer.Id_Developer;
-                _currentGame.Publisher_Id = publisher.Id_Publisher;
-
-                if (!string.IsNullOrEmpty(_imagePath))
-                    _currentGame.Image = _imagePath;
+                // Заголовок для режима ДОБАВЛЕНИЯ
+                this.Title = "ДОБАВЛЕНИЕ ИГРЫ";
+                TxtHeader.Text = "ДОБАВЛЕНИЕ ИГРЫ";
             }
-
-            App.Context.SaveChanges();
-
-            NavigationService.Navigate(new GamePage());
         }
 
-        private void BtnImage_Click(object sender, RoutedEventArgs e)
+        private void Save_Click(object sender, RoutedEventArgs e)
         {
-            var dialog = new OpenFileDialog();
+            try
+            {
+                _currentGame.Title = TBTitle.Text;
+                _currentGame.Description = TBDescription.Text;
 
-            if (dialog.ShowDialog() == true)
-                _imagePath = System.IO.Path.GetFileName(dialog.FileName);
+                if (decimal.TryParse(TBPrice.Text, out decimal price))
+                    _currentGame.Price = price;
+
+                if (double.TryParse(TBDiscount.Text, out double discount))
+                    _currentGame.Discount = discount / 100.0;
+
+                _currentGame.Genre = CBGenre.SelectedItem as Genre;
+                _currentGame.Developer = CBDeveloper.SelectedItem as Developer;
+                _currentGame.Publisher = CBPublisher.SelectedItem as Publisher;
+
+                if (_currentGame.Id_Game == 0)
+                    App.Context.Game.Add(_currentGame);
+
+                App.Context.SaveChanges();
+                MessageBox.Show("Информация сохранена!", "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
+                NavigationService.GoBack();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Ошибка при сохранении: " + ex.Message);
+            }
+        }
+
+        private void Cancel_Click(object sender, RoutedEventArgs e)
+        {
+            NavigationService.GoBack();
         }
     }
 }
