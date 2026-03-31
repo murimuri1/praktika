@@ -106,9 +106,6 @@
     <Compile Include="Entities\Role.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
-    <Compile Include="Entities\sysdiagrams.cs">
-      <DependentUpon>Model1.tt</DependentUpon>
-    </Compile>
     <Compile Include="Entities\User.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
@@ -199,26 +196,6 @@
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resurs\1.jpg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Resurs\10.jpg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Resurs\1019015028.jpg" />
-    <Resource Include="Resurs\11.jpg" />
-    <Resource Include="Resurs\2.jpg" />
-    <Resource Include="Resurs\3.jpg" />
-    <Resource Include="Resurs\4.jpg" />
-    <Resource Include="Resurs\5.jpg" />
-    <Resource Include="Resurs\6.jpg" />
-    <Resource Include="Resurs\6187557323.jpg" />
-    <Resource Include="Resurs\6934341331.jpg" />
-    <Resource Include="Resurs\7.jpg" />
-    <Resource Include="Resurs\8.jpg" />
-    <Resource Include="Resurs\9.jpg" />
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="Entities\Model1.Context.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <DependentUpon>Model1.edmx</DependentUpon>
@@ -229,6 +206,14 @@
       <DependentUpon>Model1.edmx</DependentUpon>
       <LastGenOutput>Model1.cs</LastGenOutput>
     </Content>
+    <Resource Include="Resurs\qr_code.png" />
+    <Resource Include="Resurs\ffh.jpg" />
+    <Resource Include="Resurs\wukong.jpg" />
+    <Resource Include="Resurs\cs2.jpg" />
+    <Resource Include="Resurs\cyberpunk.jpg" />
+    <Resource Include="Resurs\dota2.jpg" />
+    <Resource Include="Resurs\gta5.jpg" />
+    <Resource Include="Resurs\witcher3.jpg" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

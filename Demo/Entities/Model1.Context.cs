@@ -13,10 +13,10 @@ namespace Demo.Entities
     using System.Data.Entity;
     using System.Data.Entity.Infrastructure;
     
-    public partial class GameShopEntities1 : DbContext
+    public partial class GameShopEntities2 : DbContext
     {
-        public GameShopEntities1()
-            : base("name=GameShopEntities1")
+        public GameShopEntities2()
+            : base("name=GameShopEntities2")
         {
         }
     
@@ -31,7 +31,6 @@ namespace Demo.Entities
         public virtual DbSet<Publisher> Publisher { get; set; }
         public virtual DbSet<Review> Review { get; set; }
         public virtual DbSet<Role> Role { get; set; }
-        public virtual DbSet<sysdiagrams> sysdiagrams { get; set; }
         public virtual DbSet<User> User { get; set; }
         public virtual DbSet<UserGame> UserGame { get; set; }
     }

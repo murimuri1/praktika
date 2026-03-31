@@ -1,40 +1,113 @@
 ﻿<Page x:Class="Demo.Pages.LibraryPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-      Title="Библиотека">
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      mc:Ignorable="d"
+      d:DesignHeight="720" d:DesignWidth="1280"
+      Loaded="Page_Loaded"
+      Title="БИБЛИОТЕКА"
+      FontFamily="Segoe UI">
 
     <Grid Background="#1b2838">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <!-- Заголовок раздела -->
+            <RowDefinition Height="*"/>
+            <!-- Список игр -->
+        </Grid.RowDefinitions>
 
-        <ScrollViewer>
+        <!-- ВЕРХНЯЯ ПАНЕЛЬ БИБЛИОТЕКИ -->
+        <Border Grid.Row="0" Background="#213245" Margin="30,25,30,10" CornerRadius="8" Padding="25,15">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="ВАША КОЛЛЕКЦИЯ" Foreground="#1a9fff" FontWeight="Bold" FontSize="14" VerticalAlignment="Center"/>
+                <Border Width="1" Background="#1a9fff" Opacity="0.3" Margin="20,0" Height="20"/>
+                <TextBlock x:Name="TxtCount" Text="0 игр" Foreground="#c5c3c0" FontSize="14" VerticalAlignment="Center"/>
+            </StackPanel>
+        </Border>
+
+        <!-- СПИСОК КУПЛЕННЫХ ИГР -->
+        <ScrollViewer Grid.Row="1" Margin="20,5,20,20" VerticalScrollBarVisibility="Auto">
             <ItemsControl x:Name="LibraryList">
-
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
-                        <WrapPanel/>
+                        <WrapPanel HorizontalAlignment="Center"/>
                     </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
 
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <Border Width="200"
-                                Margin="10"
-                                Background="#2a475e"
-                                CornerRadius="10">
+                        <!-- Карточка игры: ширина 280, стиль как в каталоге -->
+                        <Border x:Name="CardBorder" Width="280" Margin="12" Background="#2a475e" CornerRadius="12">
+                            <Border.Effect>
+                                <DropShadowEffect BlurRadius="25" ShadowDepth="6" Opacity="0.5"/>
+                            </Border.Effect>
 
                             <StackPanel>
-                                <Image Height="120"
-                                       Source="{Binding ImagePath}"/>
+                                <!-- Изображение: высота 280 под твои квадратные фото -->
+                                <Border CornerRadius="12,12,0,0" ClipToBounds="True" Background="#171a21">
+                                    <Image Height="280" Source="{Binding ImagePath}" Stretch="UniformToFill">
+                                        <!-- Эффект затемнения если игра не установлена (пример) -->
+                                        <Image.Style>
+                                            <Style TargetType="Image">
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding IsMouseOver, RelativeSource={RelativeSource AncestorType=Border}}" Value="True">
+                                                        <Setter Property="Opacity" Value="0.9"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Image.Style>
+                                    </Image>
+                                </Border>
 
-                                <TextBlock Text="{Binding Title}"
-                                           Foreground="White"
-                                           Margin="5"/>
+                                <Border Padding="18">
+                                    <StackPanel>
+                                        <!-- Жанр и Разработчик -->
+                                        <TextBlock Foreground="#a3db59" FontSize="11" FontWeight="Bold" Margin="0,0,0,6">
+                                            <Run Text="{Binding Genre.Name_Genre}"/>
+                                            <Run Text=" • "/>
+                                            <Run Text="{Binding Developer.Name_Developer}"/>
+                                        </TextBlock>
+
+                                        <!-- Название игры -->
+                                        <TextBlock Text="{Binding Title}" Foreground="White" FontSize="20" FontWeight="Bold" Margin="0,0,0,15" TextWrapping="Wrap"/>
+
+                                        <!-- Кнопка ИГРАТЬ -->
+                                        <Button Content="ИГРАТЬ" 
+                                                Click="Play_Click" 
+                                                Background="#4c6b22" 
+                                                Foreground="White" 
+                                                FontWeight="Bold" 
+                                                BorderThickness="0" 
+                                                Height="40" 
+                                                Cursor="Hand">
+                                            <Button.Template>
+                                                <ControlTemplate TargetType="Button">
+                                                    <Border x:Name="btn" Background="{TemplateBinding Background}" CornerRadius="4">
+                                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                    </Border>
+                                                    <ControlTemplate.Triggers>
+                                                        <Trigger Property="IsMouseOver" Value="True">
+                                                            <Setter TargetName="btn" Property="Background" Value="#5da821"/>
+                                                        </Trigger>
+                                                    </ControlTemplate.Triggers>
+                                                </ControlTemplate>
+                                            </Button.Template>
+                                        </Button>
+                                    </StackPanel>
+                                </Border>
                             </StackPanel>
                         </Border>
+
+                        <!-- Триггер наведения на всю карточку -->
+                        <DataTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="CardBorder" Property="Background" Value="#355a77"/>
+                            </Trigger>
+                        </DataTemplate.Triggers>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
-
             </ItemsControl>
         </ScrollViewer>
-
     </Grid>
 </Page>

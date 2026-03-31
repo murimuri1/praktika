@@ -1,12 +1,20 @@
 ﻿using Demo.Entities;
+using System;
 using System.Collections.Generic;
-using System.IO.Packaging;
+using System.Globalization;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Media;
+using System.Windows.Navigation;
 
 namespace Demo.Pages
 {
+    /// <summary>
+    /// Логика взаимодействия для GamePage.xaml
+    /// </summary>
     public partial class GamePage : Page
     {
         private List<Game> _games;
@@ -18,86 +26,142 @@ namespace Demo.Pages
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            // Настраиваем видимость кнопок в зависимости от роли (Tag будет читаться в XAML)
-            // Предполагаем, что Role_Id == 1 — это Администратор
             if (App.CurrentUser != null)
             {
-                if (App.CurrentUser.Role_Id == 1)
+                if (Application.Current.MainWindow != null)
                 {
-                    // Для Админа: XAML скроет "Оплатить", но покажет "Редактировать"/"Удалить"
-                    Application.Current.MainWindow.Tag = "Visible";
-                }
-                else
-                {
-                    // Для обычного Юзера: XAML покажет "Оплатить", но скроет "Редактировать"/"Удалить"
-                    Application.Current.MainWindow.Tag = "Collapsed";
+                    Application.Current.MainWindow.Tag = App.CurrentUser.Role_Id == 1 ? "Visible" : "Collapsed";
                 }
             }
 
-            _games = App.Context.Game.ToList();
-            GameList.ItemsSource = _games;
+            try
+            {
+                _games = App.Context.Game.ToList();
+                GameList.ItemsSource = _games;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Ошибка при загрузке данных: " + ex.Message);
+            }
         }
 
         private void TBoxSearch_TextChanged(object sender, TextChangedEventArgs e)
         {
-            // ЗАЩИТА: Если данные еще не загружены, ничего не делаем
             if (_games == null) return;
-
-            string search = TBoxSearch.Text.ToLower();
-
-            GameList.ItemsSource = _games
-                .Where(g => g.Title.ToLower().Contains(search))
-                .ToList();
+            string search = TBoxSearch.Text.ToLower().Trim();
+            GameList.ItemsSource = _games.Where(g => g.Title.ToLower().Contains(search)).ToList();
         }
 
         private void ComboSort_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            // ЗАЩИТА: Если данные еще не загружены, прерываем выполнение, чтобы избежать ArgumentNullException
             if (_games == null) return;
-
             var list = _games.ToList();
 
-            if (ComboSort.SelectedIndex == 1)
-                list = list.OrderBy(g => g.Price).ToList();
-
-            if (ComboSort.SelectedIndex == 2)
-                list = list.OrderByDescending(g => g.Price).ToList();
+            switch (ComboSort.SelectedIndex)
+            {
+                case 1:
+                    list = list.OrderBy(g => g.Price).ToList();
+                    break;
+                case 2:
+                    list = list.OrderByDescending(g => g.Price).ToList();
+                    break;
+            }
 
             GameList.ItemsSource = list;
         }
 
         private void Buy_Click(object sender, RoutedEventArgs e)
         {
-            var game = (sender as Button).DataContext as Game;
-
-            if (game.IsOwned)
+            if (sender is Button btn && btn.DataContext is Game game)
             {
-                MessageBox.Show("Уже куплено!");
-                return;
+                if (game.IsOwned)
+                {
+                    MessageBox.Show($"Игра '{game.Title}' уже есть в вашей библиотеке!", "Информация", MessageBoxButton.OK, MessageBoxImage.Information);
+                    return;
+                }
+                NavigationService.Navigate(new PayPage(game));
             }
-
-            NavigationService.Navigate(new PayPage(game));
         }
 
         private void Edit_Click(object sender, RoutedEventArgs e)
         {
-            var game = (sender as Button).DataContext as Game;
-            NavigationService.Navigate(new AddEditGamePage(game));
+            if (sender is Button btn && btn.DataContext is Game game)
+            {
+                NavigationService.Navigate(new AddEditGamePage(game));
+            }
         }
 
         private void Delete_Click(object sender, RoutedEventArgs e)
         {
-            var game = (sender as Button).DataContext as Game;
+            if (sender is Button btn && btn.DataContext is Game game)
+            {
+                var result = MessageBox.Show($"Вы действительно хотите безвозвратно удалить игру '{game.Title}'?", "Подтверждение удаления", MessageBoxButton.YesNo, MessageBoxImage.Warning);
 
-            App.Context.Game.Remove(game);
-            App.Context.SaveChanges();
-
-            Page_Loaded(null, null);
+                if (result == MessageBoxResult.Yes)
+                {
+                    App.Context.Game.Remove(game);
+                    App.Context.SaveChanges();
+                    Page_Loaded(null, null);
+                }
+            }
         }
+    }
 
-        private void Library_Click(object sender, RoutedEventArgs e)
+    // ==========================================================
+    // КОНВЕРТЕРЫ ДЛЯ ОТОБРАЖЕНИЯ ЗВЕЗДОЧЕК И ИХ ЦВЕТА
+    // ==========================================================
+
+    /// <summary>
+    /// Преобразует числовой рейтинг в строку из звездочек (от 1 до 5)
+    /// </summary>
+    public class RatingToStarsConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            NavigationService.Navigate(new LibraryPage());
+            if (value is string ratingText)
+            {
+                // Ищем в строке цифры (например из "★ 4,0" достаем "4,0")
+                var match = Regex.Match(ratingText, @"\d+([.,]\d+)?");
+                if (match.Success && double.TryParse(match.Value.Replace(',', '.'), NumberStyles.Any, CultureInfo.InvariantCulture, out double rating))
+                {
+                    // Округляем до ближайшего целого, чтобы получить количество звезд
+                    int starsCount = (int)Math.Round(rating);
+                    starsCount = Math.Max(0, Math.Min(5, starsCount)); // Защита от выхода за пределы
+                    return new string('★', starsCount);
+                }
+            }
+            return ""; // Если оценки нет, возвращаем пустоту
         }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => null;
+    }
+
+    /// <summary>
+    /// Выбирает цвет для звездочек в зависимости от оценки
+    /// </summary>
+    public class RatingToColorConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value is string ratingText)
+            {
+                var match = Regex.Match(ratingText, @"\d+([.,]\d+)?");
+                if (match.Success && double.TryParse(match.Value.Replace(',', '.'), NumberStyles.Any, CultureInfo.InvariantCulture, out double rating))
+                {
+                    int starsCount = (int)Math.Round(rating);
+
+                    if (starsCount <= 2)
+                        return new SolidColorBrush(Color.FromRgb(255, 76, 76)); // Красный (1-2)
+
+                    if (starsCount == 3)
+                        return new SolidColorBrush(Color.FromRgb(255, 204, 0)); // Желтый (3)
+
+                    return new SolidColorBrush(Color.FromRgb(163, 219, 89));    // Зеленый (4-5)
+                }
+            }
+            return new SolidColorBrush(Colors.Transparent);
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => null;
     }
 }

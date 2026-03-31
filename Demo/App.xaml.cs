@@ -13,8 +13,8 @@ namespace Demo
     /// </summary>
     public partial class App : Application
     {
-        public static Entities.GameShopEntities1 Context
-        { get; } = new Entities.GameShopEntities1();
+        public static Entities.GameShopEntities2 Context
+        { get; } = new Entities.GameShopEntities2();
 
         //свойство для хранения авторизованного пользователя
         public static Entities.User CurrentUser { get; set; }

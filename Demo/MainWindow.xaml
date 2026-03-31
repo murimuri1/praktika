@@ -1,61 +1,49 @@
 ﻿<Window x:Class="Demo.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:Demo"
-        mc:Ignorable="d"
-        Icon="/Sourse/Icon.ico"
         Title="Game Store" Height="720" Width="1280"
         WindowStartupLocation="CenterScreen"
-        ResizeMode="CanResize"
         WindowState="Maximized"
-        MinWidth="800" 
-        MinHeight="450"
-        Background="#1b2838">
+        MinWidth="800" MinHeight="500"
+        Background="#1b2838"
+        FontFamily="Segoe UI">
 
     <Grid>
         <Grid.RowDefinitions>
-            <!-- Высота Auto позволяет шапке полностью скрываться на странице авторизации -->
             <RowDefinition Height="Auto"/>
+            <!-- Шапка -->
             <RowDefinition Height="*"/>
+            <!-- Контент -->
         </Grid.RowDefinitions>
 
-        <!-- Основная панель шапки (HeaderPanel) -->
+        <!-- ПАНЕЛЬ НАВИГАЦИИ (СТИЛЬ STEAM) -->
         <StackPanel x:Name="HeaderPanel" Grid.Row="0">
-
-            <!-- 1. Тонкая верхняя полоса (Steam, Вид, Друзья...) -->
-            <StackPanel Orientation="Horizontal" Background="#171a21" Height="30">
-                
-            </StackPanel>
-
-            <!-- 2. Главное меню навигации -->
-            <Grid Background="#171a21" Height="60">
+            <Grid Background="#171a21" Height="70">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
                     <!-- Назад -->
                     <ColumnDefinition Width="*"/>
-                    <!-- Разделы -->
+                    <!-- Меню -->
                     <ColumnDefinition Width="Auto"/>
-                    <!-- Профиль -->
+                    <!-- Пользователь -->
                 </Grid.ColumnDefinitions>
 
-                <!-- Кнопка Назад (Стрелка) -->
+                <!-- КНОПКА НАЗАД (Стрелка без лишних рамок) -->
                 <Button x:Name="BtnBack" 
                         Grid.Column="0" 
                         Click="BtnBack_Click" 
-                        Margin="15,0,20,0" 
+                        Margin="15,0,15,0" 
                         Cursor="Hand">
                     <Button.Template>
                         <ControlTemplate TargetType="Button">
-                            <Border Background="Transparent" Padding="10">
-                                <TextBlock Text="🡄" FontSize="26" FontWeight="Bold">
+                            <Border Background="Transparent" VerticalAlignment="Center">
+                                <TextBlock Text="🡄" FontSize="32" FontWeight="Bold">
                                     <TextBlock.Style>
                                         <Style TargetType="TextBlock">
                                             <Setter Property="Foreground" Value="#5c6d7e"/>
                                             <Style.Triggers>
                                                 <Trigger Property="IsMouseOver" Value="True">
-                                                    <Setter Property="Foreground" Value="White"/>
+                                                    <Setter Property="Foreground" Value="#1a9fff"/>
                                                 </Trigger>
                                             </Style.Triggers>
                                         </Style>
@@ -66,43 +54,62 @@
                     </Button.Template>
                 </Button>
 
-                <!-- Список разделов -->
-                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
-                    <TextBlock Text="МАГАЗИН" Foreground="#c5c3c0" FontSize="18" FontWeight="SemiBold" Margin="0,0,30,0" VerticalAlignment="Center"/>
+                <!-- МЕНЮ: МАГАЗИН И БИБЛИОТЕКА (ВЫРАВНИВАНИЕ ПО ЦЕНТРУ) -->
+                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" Margin="10,0,0,0">
 
-                    <!-- Активный раздел (Библиотека) с синей линией -->
-                    <StackPanel VerticalAlignment="Center" Margin="0,0,30,0">
-                        <TextBlock Text="БИБЛИОТЕКА" Foreground="#1a9fff" FontSize="18" FontWeight="SemiBold" Margin="0,0,0,5"/>
-                        <Border Height="3" Background="#1a9fff" HorizontalAlignment="Stretch"/>
-                    </StackPanel>
+                    <!-- Кнопка Магазин -->
+                    <Button Click="BtnStore_Click" Margin="0,0,40,0">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <StackPanel VerticalAlignment="Center" Cursor="Hand">
+                                    <TextBlock x:Name="txt" Text="МАГАЗИН" FontSize="22" FontWeight="SemiBold" Foreground="#c5c3c0" VerticalAlignment="Center"/>
+                                    <!-- Полоска снизу -->
+                                    <Border x:Name="ind" Height="3" Background="#1a9fff" Margin="0,5,0,0" Visibility="Collapsed"/>
+                                </StackPanel>
+                                <ControlTemplate.Triggers>
+                                    <!-- Триггер подсветки по заголовку окна -->
+                                    <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=Title}" Value="МАГАЗИН">
+                                        <Setter TargetName="txt" Property="Foreground" Value="White"/>
+                                        <Setter TargetName="ind" Property="Visibility" Value="Visible"/>
+                                    </DataTrigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
 
-                    
+                    <!-- Кнопка Библиотека -->
+                    <Button Click="BtnLibrary_Click">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <StackPanel VerticalAlignment="Center" Cursor="Hand">
+                                    <TextBlock x:Name="txt" Text="БИБЛИОТЕКА" FontSize="22" FontWeight="SemiBold" Foreground="#c5c3c0" VerticalAlignment="Center"/>
+                                    <Border x:Name="ind" Height="3" Background="#1a9fff" Margin="0,5,0,0" Visibility="Collapsed"/>
+                                </StackPanel>
+                                <ControlTemplate.Triggers>
+                                    <!-- Важно: заголовок страницы Библиотеки должен совпадать с этим Value -->
+                                    <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=Title}" Value="БИБЛИОТЕКА">
+                                        <Setter TargetName="txt" Property="Foreground" Value="White"/>
+                                        <Setter TargetName="ind" Property="Visibility" Value="Visible"/>
+                                    </DataTrigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
                 </StackPanel>
 
-                <!-- Блок текущего пользователя -->
-                <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,20,0">
-
-                    <!-- Динамическое имя (админ или юзер) -->
-                    <TextBlock x:Name="TxtUserName" 
-                               Text="" 
-                               Foreground="White" 
-                               FontSize="14" 
-                               VerticalAlignment="Center"
-                               Margin="0,0,15,0"/>
-
-                    <!-- Квадратная аватарка -->
-                    <Border Width="36" Height="36" CornerRadius="4" Background="#3d4450" BorderBrush="#2a475e" BorderThickness="2">
-                        <TextBlock Text="👤" Foreground="#c5c3c0" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="20"/>
+                <!-- ПРОФИЛЬ -->
+                <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,25,0">
+                    <TextBlock x:Name="TxtUserName" Text="user" Foreground="White" FontSize="16" VerticalAlignment="Center" Margin="0,0,15,0"/>
+                    <Border Width="42" Height="42" CornerRadius="4" Background="#3d4450" BorderBrush="#2a475e" BorderThickness="2">
+                        <TextBlock Text="👤" Foreground="#c5c3c0" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="24"/>
                     </Border>
-
                 </StackPanel>
             </Grid>
+            <!-- Тонкая синяя линия под шапкой -->
+            <Border Height="1" Background="#1a9fff" Opacity="0.3"/>
         </StackPanel>
 
-        <!-- Контент приложения (сюда грузятся страницы) -->
-        <Frame x:Name="FrameMain" 
-               Grid.Row="1" 
-               NavigationUIVisibility="Hidden"/>
-
+        <!-- ОСНОВНОЙ КОНТЕНТ (Frame) -->
+        <Frame x:Name="FrameMain" Grid.Row="1" NavigationUIVisibility="Hidden"/>
     </Grid>
 </Window>
