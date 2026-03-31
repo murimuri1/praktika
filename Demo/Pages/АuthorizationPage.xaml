@@ -48,7 +48,7 @@
                                      CaretBrush="White"/>
                         </Border>
 
-                        <TextBlock Text="ПАРОЛЬ" Foreground="#5c6d7e" FontWeight="Bold" FontSize="12" Margin="0,0,0,8"/>
+                        <TextBlock Text="ПАРОЛЬ" Foreground="#1a9fff" FontWeight="Bold" FontSize="12" Margin="0,0,0,8"/>
                         <Border Background="#171a21" CornerRadius="4" Margin="0,0,0,30" BorderBrush="#2a475e" BorderThickness="1">
                             <PasswordBox x:Name="TBPassword" 
                                          Height="45" 

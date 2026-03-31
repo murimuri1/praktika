@@ -33,11 +33,12 @@ namespace Demo.Pages
                     .Select(ug => ug.Game_Id)
                     .ToList();
 
-                // Загружаем игры и сразу оборачиваем их в нашу ViewModel
+                // Загружаем игры и оборачиваем их в нашу ViewModel
                 var myGames = App.Context.Game
                     .Where(g => ownedGameIds.Contains(g.Id_Game))
                     .ToList()
-                    .Select(g => new LibraryItemViewModel { Game = g, IsInstalled = true }) // По умолчанию считаем всё установленным
+                    // ИСПРАВЛЕНИЕ: Теперь по умолчанию игра НЕ установлена (IsInstalled = false)
+                    .Select(g => new LibraryItemViewModel { Game = g, IsInstalled = false })
                     .ToList();
 
                 LibraryList.ItemsSource = myGames;
@@ -90,7 +91,7 @@ namespace Demo.Pages
 
                 if (result == MessageBoxResult.Yes)
                 {
-                    item.IsInstalled = false; // Триггер в XAML автоматически поменяет кнопки
+                    item.IsInstalled = false; // Триггер в XAML автоматически поменяет кнопки на "Установить"
                 }
             }
         }
